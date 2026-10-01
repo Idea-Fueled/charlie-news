@@ -1,18 +1,32 @@
 import React from 'react'
+import type { Metadata } from 'next'
 import './styles.css'
+import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
+import { getActiveSections } from '@/lib/getNewsData'
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+export const metadata: Metadata = {
+  title: 'Charlie News — Australian Property & Renovation News',
+  description:
+    'Independent reporting, daily insights, and updates on Australian property markets, housing policies, and renovation trends.',
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
+export default async function FrontendLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const sections = await getActiveSections()
 
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body>
-        <main>{children}</main>
+        <Header sections={sections} />
+        <main className="main-content">{children}</main>
+        <Footer sections={sections} />
       </body>
     </html>
   )

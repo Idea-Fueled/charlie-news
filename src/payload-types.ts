@@ -69,6 +69,8 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    sections: Section;
+    articles: Article;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,13 +80,15 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    sections: SectionsSelect<false> | SectionsSelect<true>;
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {};
@@ -122,7 +126,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -130,6 +134,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -147,7 +152,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -163,10 +168,172 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sections".
+ */
+export interface Section {
+  id: number;
+  name: string;
+  /**
+   * Web address ending for this section (e.g. "renovation")
+   */
+  slug: string;
+  /**
+   * One-line description displayed as the page heading description
+   */
+  description: string;
+  /**
+   * Order number in the navigation menu
+   */
+  menuOrder: number;
+  /**
+   * Visibility status of the section (Active or Hidden)
+   */
+  status: 'Active' | 'Hidden';
+  /**
+   * A few lines telling Claude what fits this section (Claude only writes for Active sections that have a topic guide)
+   */
+  claudeTopicGuide?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  /**
+   * Article headline (max 90 characters)
+   */
+  headline: string;
+  /**
+   * Web address slug for the article URL (e.g. /section/slug)
+   */
+  slug: string;
+  /**
+   * Short article summary (max 200 characters)
+   */
+  summary: string;
+  /**
+   * Meta description for Google and social previews (max 160 characters)
+   */
+  seoDescription?: string | null;
+  /**
+   * Full article text with subheadings and paragraphs (400-700 words)
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * The section this article belongs to (e.g. Renovation, Politics)
+   */
+  section: number | Section;
+  /**
+   * Publication status: Draft (in Review Queue), Published (live on website), or Rejected
+   */
+  status: 'Draft' | 'Published' | 'Rejected';
+  /**
+   * Flags raised by automated checks or Claude
+   */
+  flags?: ('Needs photo' | 'Check wording' | 'Facts unclear')[] | null;
+  /**
+   * Details and reasons for any flags attached to this draft
+   */
+  flagReasons?: string | null;
+  /**
+   * Optional reason for rejection (saved to help tune Claude)
+   */
+  rejectReason?: ('Not relevant' | 'Wrong facts' | 'Poor writing' | 'Duplicate' | 'Other') | null;
+  image?: {
+    /**
+     * URL of the image
+     */
+    url?: string | null;
+    /**
+     * Image width in pixels
+     */
+    width?: number | null;
+    /**
+     * Image height in pixels
+     */
+    height?: number | null;
+    /**
+     * Source provider of the image (Pexels, Unsplash, or Upload)
+     */
+    source?: ('Pexels' | 'Unsplash' | 'Upload') | null;
+  };
+  /**
+   * Alt text for the photo for accessibility
+   */
+  imageAlt?: string | null;
+  imageCredit?: {
+    /**
+     * Name of the photographer or credit holder
+     */
+    name?: string | null;
+    /**
+     * Link to the photo page or photographer profile
+     */
+    link?: string | null;
+  };
+  /**
+   * Photo ID on Pexels or Unsplash
+   */
+  imageSourceId?: string | null;
+  /**
+   * Name of the original news source
+   */
+  sourceName?: string | null;
+  /**
+   * URL of the original source story
+   */
+  sourceUrl?: string | null;
+  /**
+   * Fingerprint (cleaned URL + headline) used to stop repeats within 14 days
+   */
+  sourceFingerprint?: string | null;
+  /**
+   * Publication date and time (Sydney timezone)
+   */
+  publishedAt?: string | null;
+  /**
+   * Claude model used to generate draft (e.g. claude-sonnet-5)
+   */
+  claudeModel?: string | null;
+  /**
+   * ID of the automation run that produced this draft
+   */
+  claudeRunId?: string | null;
+  /**
+   * Previous slugs kept for redirects when an admin changes the headline
+   */
+  oldSlugs?:
+    | {
+        slug: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,20 +350,28 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'sections';
+        value: number | Section;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -206,10 +381,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -229,7 +404,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -247,6 +422,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -274,6 +450,66 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sections_select".
+ */
+export interface SectionsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  menuOrder?: T;
+  status?: T;
+  claudeTopicGuide?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles_select".
+ */
+export interface ArticlesSelect<T extends boolean = true> {
+  headline?: T;
+  slug?: T;
+  summary?: T;
+  seoDescription?: T;
+  body?: T;
+  section?: T;
+  status?: T;
+  flags?: T;
+  flagReasons?: T;
+  rejectReason?: T;
+  image?:
+    | T
+    | {
+        url?: T;
+        width?: T;
+        height?: T;
+        source?: T;
+      };
+  imageAlt?: T;
+  imageCredit?:
+    | T
+    | {
+        name?: T;
+        link?: T;
+      };
+  imageSourceId?: T;
+  sourceName?: T;
+  sourceUrl?: T;
+  sourceFingerprint?: T;
+  publishedAt?: T;
+  claudeModel?: T;
+  claudeRunId?: T;
+  oldSlugs?:
+    | T
+    | {
+        slug?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

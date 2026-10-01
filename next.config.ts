@@ -7,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  output: process.env.BUILD_STANDALONE === 'true' ? 'standalone' : undefined,
   images: {
     localPatterns: [
       {
