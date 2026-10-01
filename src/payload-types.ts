@@ -71,6 +71,8 @@ export interface Config {
     media: Media;
     sections: Section;
     articles: Article;
+    pages: Page;
+    'automation-runs': AutomationRun;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +84,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     sections: SectionsSelect<false> | SectionsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    'automation-runs': AutomationRunsSelect<false> | AutomationRunsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -330,6 +334,100 @@ export interface Article {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  /**
+   * Page title displayed on the website
+   */
+  title: string;
+  /**
+   * Web address slug for this page (e.g. "privacy-terms")
+   */
+  slug: string;
+  /**
+   * Content for Section 1: Privacy Policy
+   */
+  privacyPolicy?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Content for Section 2: Terms of Use
+   */
+  termsOfUse?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "automation-runs".
+ */
+export interface AutomationRun {
+  id: number;
+  /**
+   * Timestamp when this automation run started
+   */
+  startedAt: string;
+  /**
+   * Timestamp when this automation run finished
+   */
+  finishedAt?: string | null;
+  /**
+   * Outcome of the automation run
+   */
+  result: 'Success' | 'Partial' | 'Failed';
+  /**
+   * Number of RSS/source stories evaluated
+   */
+  storiesChecked?: number | null;
+  /**
+   * Number of article drafts generated during this run
+   */
+  draftsCreated?: number | null;
+  /**
+   * Error messages or failure logs if encountered
+   */
+  errors?: string | null;
+  /**
+   * Total LLM tokens consumed during the run
+   */
+  tokensUsed?: number | null;
+  /**
+   * Estimated API cost for this run
+   */
+  estimatedCost?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -367,6 +465,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'articles';
         value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'automation-runs';
+        value: number | AutomationRun;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -508,6 +614,34 @@ export interface ArticlesSelect<T extends boolean = true> {
         slug?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  privacyPolicy?: T;
+  termsOfUse?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "automation-runs_select".
+ */
+export interface AutomationRunsSelect<T extends boolean = true> {
+  startedAt?: T;
+  finishedAt?: T;
+  result?: T;
+  storiesChecked?: T;
+  draftsCreated?: T;
+  errors?: T;
+  tokensUsed?: T;
+  estimatedCost?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -2,9 +2,10 @@ import { APIError, type CollectionConfig } from 'payload'
 
 export const Articles: CollectionConfig = {
   slug: 'articles',
+  defaultSort: '-createdAt',
   admin: {
     useAsTitle: 'headline',
-    defaultColumns: ['headline', 'section', 'status', 'publishedAt'],
+    defaultColumns: ['headline', 'section', 'status', 'flags', 'createdAt'],
   },
   access: {
     read: ({ req: { user } }) => {
@@ -305,16 +306,48 @@ export const Articles: CollectionConfig = {
     beforeChange: [
       async ({ data, originalDoc }) => {
         const status = data?.status ?? originalDoc?.status
-        const imageUrl = data?.image?.url ?? originalDoc?.image?.url
+        const imageUrl = data?.image !== undefined ? data?.image?.url : originalDoc?.image?.url
 
-        // SOW 5.3.3: Approve is blocked if the draft has no photo
-        if (status === 'Published' && !imageUrl) {
-          throw new APIError('Add a photo before approving.', 400)
+        // SOW 5.3.3: Approve is blocked if required publishing data is missing
+        if (status === 'Published') {
+          const headline = data?.headline !== undefined ? data.headline : originalDoc?.headline
+          const section = data?.section !== undefined ? data.section : originalDoc?.section
+          const body = data?.body !== undefined ? data.body : originalDoc?.body
+
+          if (!headline || (typeof headline === 'string' && headline.trim() === '')) {
+            throw new APIError('A headline is required before publishing.', 400)
+          }
+
+          if (!section) {
+            throw new APIError('A section must be selected before publishing.', 400)
+          }
+
+          if (!body) {
+            throw new APIError('Article body content is required before publishing.', 400)
+          }
+
+          if (!imageUrl) {
+            throw new APIError('Add a photo before approving.', 400)
+          }
+
+          // SOW 5.3.3: Set publishedAt when approved/published if not already set
+          if (!data?.publishedAt && !originalDoc?.publishedAt) {
+            data.publishedAt = new Date().toISOString()
+          }
+
+          // Clear previous rejection reason if article is now being approved/published
+          data.rejectReason = null
         }
 
-        // SOW 5.3.3: Set publishedAt when approved/published if not already set
-        if (status === 'Published' && !data?.publishedAt && !originalDoc?.publishedAt) {
-          data.publishedAt = new Date().toISOString()
+        // SOW 5.3.3: Rejection validation - rejectReason must be provided when rejecting
+        if (status === 'Rejected') {
+          const rejectReason = data?.rejectReason !== undefined ? data.rejectReason : originalDoc?.rejectReason
+          if (!rejectReason) {
+            throw new APIError(
+              'Please select a rejection reason before rejecting the article.',
+              400,
+            )
+          }
         }
 
         // SOW 4.4: If headline/slug changes, retain previous slug for redirects
