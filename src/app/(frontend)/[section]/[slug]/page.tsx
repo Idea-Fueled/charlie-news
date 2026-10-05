@@ -141,92 +141,101 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <article className="article-page-container">
-      {/* Sticky Sidebar positioned in the LEFT margin starting alongside the headline */}
-      <aside className={`article-left-sidebar ${tocItems.length === 0 ? 'article-left-sidebar--no-toc' : ''}`}>
-        <div className="article-left-sidebar-sticky">
-          <ArticleTOCAndShare
-            items={tocItems}
-            articleTitle={article.headline}
-            canonicalUrl={canonicalUrl}
-          />
-        </div>
-      </aside>
+      {/* TOP SECTION: Wide Header (Headline, Breadcrumb, Summary, Meta) */}
+      <div className="article-top-header">
+        {/* Breadcrumb (SOW 4.4) */}
+        <nav className="article-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span>/</span>
+          <Link href={`/${sectionSlug}`}>{sectionName}</Link>
+          <span>/</span>
+          <span style={{ color: 'var(--color-text-main)', fontWeight: 500 }}>Article</span>
+        </nav>
 
-      {/* Breadcrumb (SOW 4.4) */}
-      <nav className="article-breadcrumb" aria-label="Breadcrumb">
-        <Link href="/">Home</Link>
-        <span>/</span>
-        <Link href={`/${sectionSlug}`}>{sectionName}</Link>
-        <span>/</span>
-        <span style={{ color: 'var(--color-text-main)', fontWeight: 500 }}>Article</span>
-      </nav>
+        {/* Headline */}
+        <h1 className="article-headline">{article.headline}</h1>
 
-      {/* Headline & Summary */}
-      <h1 className="article-headline">{article.headline}</h1>
-      {article.summary && (
-        <p className="article-lead-summary">{article.summary}</p>
-      )}
+        {/* Lead Summary */}
+        {article.summary && (
+          <p className="article-lead-summary">{article.summary}</p>
+        )}
 
-      {/* Metadata Row */}
-      <div className="article-meta-header">
-        <div>
-          Published on <strong>{formattedDate}</strong> (Sydney Time)
-        </div>
-        <div>
-          Section:{' '}
-          <Link
-            href={`/${sectionSlug}`}
-            style={{ fontWeight: 600, color: 'var(--color-accent)' }}
-          >
-            {sectionName}
-          </Link>
+        {/* Metadata Row */}
+        <div className="article-meta-header">
+          <div>
+            Published on <strong>{formattedDate}</strong> (Sydney Time)
+          </div>
+          <div>
+            Section:{' '}
+            <Link
+              href={`/${sectionSlug}`}
+              style={{ fontWeight: 600, color: 'var(--color-accent)' }}
+            >
+              {sectionName}
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Featured Photo */}
-      {article.image?.url && (
-        <div className="article-featured-image-box">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={article.image.url}
-            alt={article.imageAlt || article.headline}
-          />
-        </div>
-      )}
-
-      {/* Photo credit line under photo (SOW 4.4) */}
-      {photoCreditElement && (
-        <div className="photo-credit-line">{photoCreditElement}</div>
-      )}
-
-      {/* Main Article Body */}
-      <div className="article-main-body">
-        <RichTextRenderer
-          content={article.body}
-          fallbackText={article.bodyText}
-        />
-
-        {/* Claude AI Disclosure Note (SOW 4.4 & 6.3) */}
-        <div className="ai-disclosure-badge">
-          <div className="ai-disclosure-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
-              <path d="m9 12 2 2 4-4"/>
-            </svg>
+      {/* 2-COLUMN UNIFIED CONTENT FRAME */}
+      <div className="article-content-grid">
+        {/* LEFT COLUMN: Sticky Table of Contents & Share */}
+        <aside className={`article-sidebar-col ${tocItems.length === 0 ? 'article-sidebar-col--no-toc' : ''}`}>
+          <div className="article-sidebar-sticky">
+            <ArticleTOCAndShare
+              items={tocItems}
+              articleTitle={article.headline}
+              canonicalUrl={canonicalUrl}
+            />
           </div>
-          <div>
-            <div className="ai-disclosure-title">Charlie News Editorial Transparency</div>
-            <div className="ai-disclosure-desc">
-              This article was researched and drafted with the assistance of Claude AI, then reviewed, edited, and approved by Charlie News editors before publication.
+        </aside>
+
+        {/* RIGHT COLUMN: Featured Photo + Article Body Content */}
+        <div className="article-main-col">
+          {/* Featured Photo at the top of the right column */}
+          {article.image?.url && (
+            <div className="article-featured-image-box">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={article.image.url}
+                alt={article.imageAlt || article.headline}
+              />
+            </div>
+          )}
+
+          {/* Photo credit line under photo (SOW 4.4) */}
+          {photoCreditElement && (
+            <div className="photo-credit-line">{photoCreditElement}</div>
+          )}
+
+          {/* Article Body Content */}
+          <RichTextRenderer
+            content={article.body}
+            fallbackText={article.bodyText}
+          />
+
+          {/* Claude AI Disclosure Note (SOW 4.4 & 6.3) */}
+          <div className="ai-disclosure-badge">
+            <div className="ai-disclosure-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div>
+              <div className="ai-disclosure-title">Charlie News Editorial Transparency</div>
+              <div className="ai-disclosure-desc">
+                This article was researched and drafted with the assistance of Claude AI, then reviewed, edited, and approved by Charlie News editors before publication.
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Back to section navigation */}
-        <div className="article-back-nav">
-          <Link href={`/${sectionSlug}`} className="page-btn">
-            ← Back to {sectionName} News
-          </Link>
+          {/* Back to section navigation */}
+          <div className="article-back-nav">
+            <Link href={`/${sectionSlug}`} className="page-btn">
+              ← Back to {sectionName} News
+            </Link>
+          </div>
         </div>
       </div>
     </article>

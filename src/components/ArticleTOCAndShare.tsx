@@ -103,39 +103,22 @@ export function ArticleTOCAndShare({
       {hasTOC && (
         <div className="article-toc-section">
           <div className="article-toc-header">
-            <svg
-              className="article-toc-header-icon"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="12" x2="15" y2="12" />
-              <line x1="3" y1="18" x2="18" y2="18" />
-            </svg>
             <h2 className="article-toc-title">Jump to section</h2>
           </div>
 
           <nav aria-label="Table of contents">
-            <ol className="article-toc-list">
-              {items.map((item, index) => (
-                <li key={item.id} className="article-toc-item">
-                  <a
-                    href={`#${item.id}`}
-                    onClick={(e) => handleScrollToHeading(e, item.id)}
-                    className={`article-toc-link ${activeId === item.id ? 'active' : ''}`}
-                  >
-                    <span className="article-toc-num">{index + 1}.</span>
-                    <span className="article-toc-text">{item.text}</span>
-                  </a>
-                </li>
+            <div className="article-toc-list">
+              {items.map((item) => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  onClick={(e) => handleScrollToHeading(e, item.id)}
+                  className={`article-toc-link ${activeId === item.id ? 'active' : ''}`}
+                >
+                  <span className="article-toc-text">{item.text}</span>
+                </a>
               ))}
-            </ol>
+            </div>
           </nav>
         </div>
       )}
