@@ -4,6 +4,8 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getArticleBySlugOrRedirect } from '@/lib/getNewsData'
 import { RichTextRenderer } from '@/components/RichTextRenderer'
+import { ArticleTOCAndShare } from '@/components/ArticleTOCAndShare'
+import { extractHeadingsFromLexical } from '@/lib/toc'
 
 export const dynamic = 'force-dynamic'
 
@@ -182,6 +184,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {photoCreditElement && (
         <div className="photo-credit-line">{photoCreditElement}</div>
       )}
+
+      {/* Table of Contents & Share Article Section */}
+      <ArticleTOCAndShare
+        items={extractHeadingsFromLexical(article.body)}
+        articleTitle={article.headline}
+        canonicalUrl={`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'}/${sectionSlug}/${article.slug}`}
+      />
 
       {/* Article Body Content */}
       <RichTextRenderer

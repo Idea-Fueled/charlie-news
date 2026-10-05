@@ -1,4 +1,5 @@
 import React from 'react'
+import { getLexicalNodeText, slugifyHeading } from '@/lib/toc'
 
 interface RichTextProps {
   content?: any
@@ -28,9 +29,13 @@ export function RichTextRenderer({ content, fallbackText }: RichTextProps) {
 
   // If Lexical content exists from Payload CMS
   if (content?.root?.children && Array.isArray(content.root.children)) {
+    const slugCounts: Record<string, number> = {}
+
     return (
       <div className="article-body-content">
-        {content.root.children.map((node: any, idx: number) => renderNode(node, idx))}
+        {content.root.children.map((node: any, idx: number) =>
+          renderNode(node, idx, slugCounts),
+        )}
       </div>
     )
   }
@@ -42,7 +47,11 @@ export function RichTextRenderer({ content, fallbackText }: RichTextProps) {
   )
 }
 
-function renderNode(node: any, key: number | string): React.ReactNode {
+function renderNode(
+  node: any,
+  key: number | string,
+  slugCounts?: Record<string, number>,
+): React.ReactNode {
   if (!node) return null
 
   // 1. Text node with formatting (bold, italic, underline, code, strikethrough)
@@ -102,10 +111,26 @@ function renderNode(node: any, key: number | string): React.ReactNode {
   // 4. Headings
   if (node.type === 'heading') {
     const Tag = (node.tag || 'h2') as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+    let headingId: string | undefined = undefined
+
+    if (Tag === 'h2' && slugCounts) {
+      const text = getLexicalNodeText(node).trim()
+      if (text) {
+        const baseSlug = slugifyHeading(text)
+        if (slugCounts[baseSlug] !== undefined) {
+          slugCounts[baseSlug] += 1
+          headingId = `${baseSlug}-${slugCounts[baseSlug]}`
+        } else {
+          slugCounts[baseSlug] = 0
+          headingId = baseSlug
+        }
+      }
+    }
+
     return (
-      <Tag key={key}>
+      <Tag key={key} id={headingId}>
         {node.children?.map((child: any, cIdx: number) =>
-          renderNode(child, `${key}-${cIdx}`),
+          renderNode(child, `${key}-${cIdx}`, slugCounts),
         )}
       </Tag>
     )

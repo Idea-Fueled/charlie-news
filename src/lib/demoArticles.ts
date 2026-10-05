@@ -4,6 +4,7 @@ export interface DemoArticle {
   slug: string
   summary: string
   seoDescription?: string
+  body?: any
   bodyText?: string[]
   publishedAt: string
   section: {
@@ -41,6 +42,79 @@ export const DEMO_ARTICLES: DemoArticle[] = [
     imageCredit: {
       name: 'Tom Thurnell',
       link: 'https://unsplash.com',
+    },
+    body: {
+      root: {
+        type: 'root',
+        children: [
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'text',
+                text: 'Across Sydney’s inner-city suburbs, historic Victorian and Edwardian terraces are undergoing unprecedented transformations. Local councils are increasingly approving sympathetic modern additions that prioritize energy efficiency while honoring heritage streetscapes.',
+              },
+            ],
+          },
+          {
+            type: 'heading',
+            tag: 'h2',
+            children: [
+              {
+                type: 'text',
+                text: 'Key Takeaways for Homeowners',
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'text',
+                text: 'Architect Clare McAllister notes that homeowners are rejecting dark, drafty interiors in favor of double-height rear voids, double-glazed steel-framed doors, and integrated solar tile solutions. "The challenge has always been introducing natural light into long, narrow footprints without destroying original plasterwork or brickwork," McAllister explains.',
+              },
+            ],
+          },
+          {
+            type: 'heading',
+            tag: 'h2',
+            children: [
+              {
+                type: 'text',
+                text: 'Passive Solar and Energy Performance Standards',
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'text',
+                text: 'With new NSW energy performance standards mandating higher NatHERS ratings on major renovations, clever insulation methods and cross-ventilation courtyards have transitioned from luxury options to baseline necessities.',
+              },
+            ],
+          },
+          {
+            type: 'heading',
+            tag: 'h2',
+            children: [
+              {
+                type: 'text',
+                text: 'Budgeting and Feasibility in Inner-Sydney',
+              },
+            ],
+          },
+          {
+            type: 'paragraph',
+            children: [
+              {
+                type: 'text',
+                text: 'The average budget for comprehensive terrace restorations in inner-Sydney currently sits between $450,000 and $850,000, with sustainable upgrades delivering up to 40% reductions in ongoing heating and cooling expenses.',
+              },
+            ],
+          },
+        ],
+      },
     },
     bodyText: [
       'Across Sydney’s inner-city suburbs, historic Victorian and Edwardian terraces are undergoing unprecedented transformations. Local councils are increasingly approving sympathetic modern additions that prioritize energy efficiency while honoring heritage streetscapes.',
