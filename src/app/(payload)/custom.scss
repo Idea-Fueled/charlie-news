@@ -267,16 +267,163 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
 }
 
 /* ==========================================================================
-   3. SCOPED DARK WORKSPACE FOR THE DASHBOARD (Option 1)
+   3. UNIFIED DARK WORKSPACE ACROSS ALL PAYLOAD ADMIN PAGES
+   Applies Option 1 Dark Charcoal Editorial aesthetic to all views
    ========================================================================== */
-.template-default__wrap:has(.charlie-admin-dashboard) {
+[data-theme='dark'] {
+  --theme-bg: #0c0f17;
+  --theme-elevation-0: #0c0f17;
+  --theme-elevation-50: #111622;
+  --theme-elevation-100: #151c28;
+  --theme-elevation-150: #182232;
+  --theme-elevation-200: #1e293b;
+  --theme-elevation-250: #232d3f;
+  --theme-elevation-300: #2d3b52;
+  --theme-border-color: #1e2638;
+}
+
+.template-default,
+.template-default__wrap {
   background-color: #0c0f17 !important;
   min-height: 100vh;
 }
 
-.template-default__wrap:has(.charlie-admin-dashboard) .app-header {
+.template-default__wrap .app-header {
   background-color: #0c0f17 !important;
   border-bottom: 1px solid #1e2638 !important;
+}
+
+/* Consistent Page Headings across All Collection & Doc Views */
+.template-default h1,
+.collection-list__header h1,
+.doc-header h1,
+.doc-header__title,
+.view-description__title {
+  font-family: 'Newsreader', Georgia, serif !important;
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  color: #ffffff !important;
+  line-height: 1.15 !important;
+}
+
+/* Primary Action Buttons (Create New, Save, Publish) */
+.btn--style-primary,
+.collection-list__header a.btn,
+.collection-list__header button.btn,
+.doc-controls .btn--style-primary {
+  background-color: #0f766e !important;
+  color: #ffffff !important;
+  border: 1px solid #14b8a6 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease-in-out !important;
+
+  &:hover {
+    background-color: #0d9488 !important;
+    border-color: #2dd4bf !important;
+  }
+}
+
+/* Secondary Action Buttons */
+.btn--style-secondary,
+.doc-controls .btn--style-secondary {
+  background-color: #161e2c !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #243046 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #3b4d6e !important;
+  }
+}
+
+/* Collection Table Card Styling matching Review Queue */
+.collection-list .table,
+.table__wrapper,
+.table {
+  background-color: #151c28 !important;
+  border: 1px solid #232d3f !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.table thead th,
+.table th {
+  background-color: #0f1520 !important;
+  color: #94a3b8 !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  border-bottom: 1px solid #232d3f !important;
+}
+
+.table tbody td,
+.table td {
+  border-bottom: 1px solid #1e2638 !important;
+  color: #cbd5e1 !important;
+  font-size: 0.88rem !important;
+}
+
+.table tbody tr:hover td {
+  background-color: #192231 !important;
+}
+
+/* Search bar, inputs and filter controls in List Views */
+.search-filter input,
+.list-controls input,
+.list-controls__search input {
+  background-color: #151c28 !important;
+  border: 1px solid #232d3f !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+
+  &:focus {
+    border-color: #14b8a6 !important;
+    outline: none !important;
+  }
+}
+
+.pill,
+.list-controls .pill,
+.pill--style-light {
+  background-color: #161e2c !important;
+  border: 1px solid #243046 !important;
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+  }
+}
+
+/* Document Edit Form Fields */
+.field-type input[type='text'],
+.field-type input[type='email'],
+.field-type input[type='password'],
+.field-type textarea,
+.field-type select,
+.react-select__control {
+  background-color: #151c28 !important;
+  border: 1px solid #232d3f !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.field-type label,
+.field-label {
+  font-family: 'Inter', sans-serif !important;
+  color: #94a3b8 !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
 }
 
 .charlie-admin-dashboard {
