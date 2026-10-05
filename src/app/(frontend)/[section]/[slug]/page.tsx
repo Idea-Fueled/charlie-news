@@ -185,41 +185,57 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <div className="photo-credit-line">{photoCreditElement}</div>
       )}
 
-      {/* Table of Contents & Share Article Section */}
-      <ArticleTOCAndShare
-        items={extractHeadingsFromLexical(article.body)}
-        articleTitle={article.headline}
-        canonicalUrl={`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'}/${sectionSlug}/${article.slug}`}
-      />
+      {/* Content Area with Sticky Left Sidebar */}
+      {(() => {
+        const tocItems = extractHeadingsFromLexical(article.body)
+        const canonicalUrl = `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'}/${sectionSlug}/${article.slug}`
 
-      {/* Article Body Content */}
-      <RichTextRenderer
-        content={article.body}
-        fallbackText={article.bodyText}
-      />
+        return (
+          <div className="article-body-wrapper">
+            {/* Sticky Sidebar positioned in the LEFT margin */}
+            <aside className={`article-left-sidebar ${tocItems.length === 0 ? 'article-left-sidebar--no-toc' : ''}`}>
+              <div className="article-left-sidebar-sticky">
+                <ArticleTOCAndShare
+                  items={tocItems}
+                  articleTitle={article.headline}
+                  canonicalUrl={canonicalUrl}
+                />
+              </div>
+            </aside>
 
-      {/* Claude AI Disclosure Note (SOW 4.4 & 6.3) */}
-      <div className="ai-disclosure-badge">
-        <div className="ai-disclosure-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
-            <path d="m9 12 2 2 4-4"/>
-          </svg>
-        </div>
-        <div>
-          <div className="ai-disclosure-title">Charlie News Editorial Transparency</div>
-          <div className="ai-disclosure-desc">
-            This article was researched and drafted with the assistance of Claude AI, then reviewed, edited, and approved by Charlie News editors before publication.
+            {/* Main Article Body (stays exactly in original center column) */}
+            <div className="article-main-body">
+              <RichTextRenderer
+                content={article.body}
+                fallbackText={article.bodyText}
+              />
+
+              {/* Claude AI Disclosure Note (SOW 4.4 & 6.3) */}
+              <div className="ai-disclosure-badge">
+                <div className="ai-disclosure-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                    <path d="m9 12 2 2 4-4"/>
+                  </svg>
+                </div>
+                <div>
+                  <div className="ai-disclosure-title">Charlie News Editorial Transparency</div>
+                  <div className="ai-disclosure-desc">
+                    This article was researched and drafted with the assistance of Claude AI, then reviewed, edited, and approved by Charlie News editors before publication.
+                  </div>
+                </div>
+              </div>
+
+              {/* Back to section navigation */}
+              <div className="article-back-nav">
+                <Link href={`/${sectionSlug}`} className="page-btn">
+                  ← Back to {sectionName} News
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Back to section navigation */}
-      <div style={{ marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--color-border)' }}>
-        <Link href={`/${sectionSlug}`} className="page-btn">
-          ← Back to {sectionName} News
-        </Link>
-      </div>
+        )
+      })()}
     </article>
   )
 }
