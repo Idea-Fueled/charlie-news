@@ -177,93 +177,42 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   padding: 16px 14px;
   border-top: 1px solid #1e2638;
   background-color: #0e131c;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 
-.charlie-admin-user-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-}
-
-.charlie-user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: #0f766e;
-  color: #ffffff;
+.charlie-logout-btn-red {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
-}
-
-.charlie-user-info {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  line-height: 1.25;
-}
-
-.charlie-user-role {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #2dd4bf;
-}
-
-.charlie-user-email {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #94a3b8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.charlie-footer-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-
-.charlie-footer-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 7px 10px;
-  border-radius: 6px;
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 8px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #94a3b8;
-  background-color: #161e2c;
-  border: 1px solid #243046;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff !important;
+  background-color: #dc2626 !important;
+  border: 1px solid #ef4444 !important;
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
 }
 
-.charlie-footer-btn:hover {
-  background-color: #1e293b;
-  color: #ffffff;
-  border-color: #3b4d6e;
+.charlie-logout-btn-red:hover {
+  background-color: #b91c1c !important;
+  border-color: #dc2626 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
 }
 
-.charlie-footer-btn--logout:hover {
-  background-color: #311317;
-  color: #fca5a5;
-  border-color: #7f1d1d;
+.charlie-logout-btn-red:active {
+  transform: translateY(0);
+}
+
+.charlie-logout-btn-red svg {
+  stroke: #ffffff;
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
