@@ -14,7 +14,8 @@ import { runClaudeAutomation } from '@/lib/automation/orchestrator'
 import { checkSydneySchedule } from '@/lib/automation/timezone'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 60 // 60s max serverless duration for Vercel
+export const runtime = 'nodejs'
+export const maxDuration = 300 // 300 seconds (5 minutes) for Vercel Node.js Function execution
 
 function verifyAuthorization(req: NextRequest): boolean {
   const secret = process.env.CRON_SECRET || process.env.AUTOMATION_SECRET
