@@ -12,13 +12,15 @@ export interface CleanPage {
 
 /**
  * Fetch a CMS page by slug (e.g. 'privacy-terms')
+ * Includes resilient alias resolution and fallback for legal pages
  */
 export async function getPageBySlug(slug: string): Promise<CleanPage | null> {
   try {
     const payloadConfig = await config
     const payload = await getPayload({ config: payloadConfig })
 
-    const res = await payload.find({
+    // 1. Try direct exact slug match
+    let res = await payload.find({
       collection: 'pages' as any,
       where: {
         slug: {
@@ -26,7 +28,36 @@ export async function getPageBySlug(slug: string): Promise<CleanPage | null> {
         },
       },
       limit: 1,
+      depth: 0,
     })
+
+    // 2. If querying for privacy/terms, check common aliases in case admin edited the CMS slug
+    if ((!res.docs || res.docs.length === 0) && (slug === 'privacy-terms' || slug === 'privacy-policy')) {
+      const aliasSlugs =
+        slug === 'privacy-terms'
+          ? ['privacy-policy', 'privacy-and-terms', 'privacy', 'terms']
+          : ['privacy-terms', 'privacy-and-terms', 'privacy', 'terms']
+
+      res = await payload.find({
+        collection: 'pages' as any,
+        where: {
+          slug: {
+            in: aliasSlugs,
+          },
+        },
+        limit: 1,
+        depth: 0,
+      })
+    }
+
+    // 3. Fallback: if querying for privacy-terms and still not found, load the primary Pages document
+    if ((!res.docs || res.docs.length === 0) && (slug === 'privacy-terms' || slug === 'privacy-policy')) {
+      res = await payload.find({
+        collection: 'pages' as any,
+        limit: 1,
+        depth: 0,
+      })
+    }
 
     if (res.docs && res.docs.length > 0) {
       const doc = res.docs[0] as any
@@ -44,4 +75,11 @@ export async function getPageBySlug(slug: string): Promise<CleanPage | null> {
   }
 
   return null
+}
+
+/**
+ * Dedicated helper to retrieve the Privacy Policy & Terms of Use CMS document
+ */
+export async function getPrivacyTermsPage(): Promise<CleanPage | null> {
+  return getPageBySlug('privacy-terms')
 }

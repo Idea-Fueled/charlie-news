@@ -20,6 +20,7 @@ export interface CleanArticle {
   bodyText?: string[]
   publishedAt?: string | null
   createdAt?: string
+  updatedAt?: string | null
   section: CleanSection
   image?: {
     url?: string | null
@@ -65,6 +66,7 @@ function mapDocToCleanArticle(doc: any): CleanArticle {
     body: doc.body,
     publishedAt: doc.publishedAt || null,
     createdAt: doc.createdAt || null,
+    updatedAt: doc.updatedAt || null,
     section: sec,
     image: doc.image || null,
     imageAlt: doc.imageAlt || null,

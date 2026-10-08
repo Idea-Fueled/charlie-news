@@ -1,11 +1,14 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getArticleBySlugOrRedirect } from '@/lib/getNewsData'
 import { RichTextRenderer } from '@/components/RichTextRenderer'
 import { ArticleTOCAndShare } from '@/components/ArticleTOCAndShare'
 import { extractHeadingsFromLexical } from '@/lib/toc'
+
+import { getSiteUrl, toAbsoluteImageUrl } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,16 +23,22 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const { section: sectionSlug, slug: articleSlug } = await params
   const res = await getArticleBySlugOrRedirect(sectionSlug, articleSlug)
 
-  if (res.type !== 'found') {
+  if (res.type !== 'found' || !res.article) {
     return {
       title: 'Article Not Found | Charlie News',
+      robots: {
+        index: false,
+        follow: false,
+      },
     }
   }
 
   const { article } = res
-  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'
+  const siteUrl = getSiteUrl()
   const canonicalUrl = `${siteUrl}/${sectionSlug}/${article.slug}`
   const description = article.seoDescription || article.summary
+  const articleImageUrl = toAbsoluteImageUrl(article.image?.url)
+  const imageAlt = article.imageAlt || article.headline
 
   return {
     title: `${article.headline} | Charlie News`,
@@ -41,22 +50,26 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       title: article.headline,
       description,
       url: canonicalUrl,
+      siteName: 'Charlie News',
+      locale: 'en_AU',
       type: 'article',
-      publishedTime: article.publishedAt || undefined,
-      images: article.image?.url
-        ? [
-            {
-              url: article.image.url,
-              alt: article.imageAlt || article.headline,
-            },
-          ]
-        : [],
+      publishedTime: article.publishedAt || article.createdAt || undefined,
+      modifiedTime: article.updatedAt || article.publishedAt || undefined,
+      section: article.section?.name || 'Property',
+      images: [
+        {
+          url: articleImageUrl,
+          width: article.image?.width || 1200,
+          height: article.image?.height || 630,
+          alt: imageAlt,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: article.headline,
       description,
-      images: article.image?.url ? [article.image.url] : [],
+      images: [articleImageUrl],
     },
   }
 }
@@ -67,7 +80,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   // SOW 4.4: 301 Permanent Redirect when previous slug or canonical section is matched
   if (res.type === 'redirect') {
-    redirect(res.targetUrl)
+    permanentRedirect(res.targetUrl)
   }
 
   if (res.type === 'notFound' || !res.article) {
@@ -137,19 +150,58 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   const tocItems = extractHeadingsFromLexical(article.body)
-  const canonicalUrl = `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3005'}/${sectionSlug}/${article.slug}`
+  const siteUrl = getSiteUrl()
+  const canonicalUrl = `${siteUrl}/${sectionSlug}/${article.slug}`
+
+  // NewsArticle JSON-LD Structured Data (Schema.org)
+  const newsArticleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl,
+    },
+    headline: article.headline,
+    description: article.seoDescription || article.summary,
+    url: canonicalUrl,
+    datePublished: article.publishedAt || article.createdAt,
+    dateModified: article.updatedAt || article.publishedAt || article.createdAt,
+    ...(article.image?.url
+      ? {
+          image: [article.image.url],
+        }
+      : {}),
+    publisher: {
+      '@type': 'NewsMediaOrganization',
+      name: 'Charlie News',
+      url: siteUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/favicon.ico`,
+      },
+    },
+    articleSection: sectionName,
+    inLanguage: 'en-AU',
+  }
 
   return (
-    <article className="article-page-container">
-      {/* TOP SECTION: Wide Header (Headline, Breadcrumb, Summary, Meta) */}
+    <>
+      {/* NewsArticle Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleJsonLd) }}
+      />
+
+      <article className="site-container article-page-container">
+        {/* TOP SECTION: Wide Header (Headline, Breadcrumb, Summary, Meta) */}
       <div className="article-top-header">
         {/* Breadcrumb (SOW 4.4) */}
         <nav className="article-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
-          <span>/</span>
+          <span aria-hidden="true">/</span>
           <Link href={`/${sectionSlug}`}>{sectionName}</Link>
-          <span>/</span>
-          <span style={{ color: 'var(--color-text-main)', fontWeight: 500 }}>Article</span>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page" style={{ color: 'var(--color-text-main)', fontWeight: 500 }}>Article</span>
         </nav>
 
         {/* Headline */}
@@ -163,7 +215,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* Metadata Row */}
         <div className="article-meta-header">
           <div>
-            Published on <strong>{formattedDate}</strong> (Sydney Time)
+            Published on <time dateTime={dateStr || undefined}><strong>{formattedDate}</strong></time> (Sydney Time)
           </div>
           <div>
             Section:{' '}
@@ -180,7 +232,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       {/* 2-COLUMN UNIFIED CONTENT FRAME */}
       <div className="article-content-grid">
         {/* LEFT COLUMN: Sticky Table of Contents & Share */}
-        <aside className={`article-sidebar-col ${tocItems.length === 0 ? 'article-sidebar-col--no-toc' : ''}`}>
+        <aside
+          className={`article-sidebar-col ${tocItems.length === 0 ? 'article-sidebar-col--no-toc' : ''}`}
+          aria-label="Article navigation and sharing"
+        >
           <div className="article-sidebar-sticky">
             <ArticleTOCAndShare
               items={tocItems}
@@ -195,10 +250,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Featured Photo at the top of the right column */}
           {article.image?.url && (
             <div className="article-featured-image-box">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={article.image.url}
                 alt={article.imageAlt || article.headline}
+                width={1200}
+                height={675}
+                priority
+                sizes="(max-width: 1024px) 100vw, 840px"
+                style={{ width: '100%', height: 'auto', maxHeight: '520px', objectFit: 'cover' }}
               />
             </div>
           )}
@@ -217,7 +276,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Claude AI Disclosure Note (SOW 4.4 & 6.3) */}
           <div className="ai-disclosure-badge">
             <div className="ai-disclosure-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
                 <path d="m9 12 2 2 4-4"/>
               </svg>
@@ -232,12 +291,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
           {/* Back to section navigation */}
           <div className="article-back-nav">
-            <Link href={`/${sectionSlug}`} className="page-btn">
-              ← Back to {sectionName} News
+            <Link href={`/${sectionSlug}`} className="page-btn" aria-label={`Back to ${sectionName} News`}>
+              <span aria-hidden="true">←</span> Back to {sectionName} News
             </Link>
           </div>
         </div>
       </div>
     </article>
+    </>
   )
 }

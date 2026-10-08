@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidatePath } from 'next/cache'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -8,6 +9,17 @@ export const Pages: CollectionConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        try {
+          revalidatePath('/privacy-terms')
+        } catch {
+          // Non-blocking outside of Next.js request context
+        }
+      },
+    ],
   },
   fields: [
     {
@@ -27,7 +39,7 @@ export const Pages: CollectionConfig = {
       index: true,
       defaultValue: 'privacy-terms',
       admin: {
-        description: 'Web address slug for this page (e.g. "privacy-terms")',
+        description: 'Web address slug for this page. Public frontend route is /privacy-terms.',
       },
     },
     {

@@ -343,7 +343,7 @@ export interface Page {
    */
   title: string;
   /**
-   * Web address slug for this page (e.g. "privacy-terms")
+   * Web address slug for this page. Public frontend route is /privacy-terms.
    */
   slug: string;
   /**
@@ -402,7 +402,7 @@ export interface AutomationRun {
   /**
    * Outcome of the automation run
    */
-  result: 'Success' | 'Partial' | 'Failed';
+  result: 'Running' | 'Success' | 'Partial' | 'Failed' | 'Skipped';
   /**
    * Number of RSS/source stories evaluated
    */

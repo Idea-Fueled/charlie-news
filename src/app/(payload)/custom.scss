@@ -12,27 +12,210 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400&display=swap');
 
 /* ==========================================================================
-   1. DESKTOP NAV TOGGLER OVERLAP FIX
-   Hide duplicate hamburger box on desktop so it never overlaps the brand logo
+   1. GLOBAL VIEWPORT & MOBILE OVERFLOW CONTAINMENT
    ========================================================================== */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ==========================================================================
+   2. NAV TOGGLER OVERLAP FIX & MOBILE NAV TOGGLER
+   Always hide the floating template-default__nav-toggler-wrapper which causes
+   vertical overflow over the dashboard content.
+   ========================================================================== */
+.template-default__nav-toggler-wrapper {
+  display: none !important;
+}
+
 @media (min-width: 1025px) {
-  .template-default__nav-toggler-wrapper {
+  .app-header__mobile-nav-toggler {
+    display: none !important;
+  }
+
+  .charlie-sidebar-close-btn {
+    display: none !important;
+  }
+
+  .charlie-nav-backdrop {
     display: none !important;
   }
 }
 
 /* ==========================================================================
-   2. DARK GRAPHITE SIDEBAR (Charlie News Admin Nav - Option 1)
+   3. DARK GRAPHITE SIDEBAR (Charlie News Admin Nav - Option 1)
+   Desktop: Fixed 260px wide editorial column
+   Mobile/Tablet: Smooth sliding off-canvas drawer with touch backdrop
    ========================================================================== */
 aside.nav.charlie-admin-sidebar {
-  width: 260px !important;
-  min-width: 260px !important;
   background-color: #131822 !important;
   border-right: 1px solid #1e2638 !important;
   box-shadow: 1px 0 10px rgba(0, 0, 0, 0.35) !important;
-  z-index: 50;
+  z-index: 1050;
   padding-top: 0 !important;
   margin-top: 0 !important;
+}
+
+@media (min-width: 1025px) {
+  aside.nav.charlie-admin-sidebar {
+    width: 260px !important;
+    min-width: 260px !important;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    z-index: 50;
+  }
+}
+
+@media (max-width: 1024px) {
+  .template-default {
+    grid-template-columns: 1fr !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .template-default__wrap {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  aside.nav.charlie-admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    min-width: 0 !important;
+    z-index: 1050 !important;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+    box-shadow: none !important;
+    pointer-events: none;
+    visibility: hidden;
+
+    &.nav--nav-open {
+      transform: translateX(0) !important;
+      box-shadow: 6px 0 28px rgba(0, 0, 0, 0.75) !important;
+      pointer-events: auto !important;
+      visibility: visible !important;
+    }
+  }
+
+  .charlie-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1040;
+    cursor: pointer;
+  }
+
+  .charlie-sidebar-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .charlie-sidebar-close-btn {
+    background: transparent;
+    border: 1px solid #243046;
+    border-radius: 6px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: #1e293b;
+      color: #ffffff;
+      border-color: #3b4d6e;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .app-header__mobile-nav-toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    padding: 0 !important;
+    margin: 0 10px 0 0 !important;
+    background: #161e2c !important;
+    border: 1px solid #232d3f !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-in-out !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    align-self: center !important;
+    flex-shrink: 0 !important;
+
+    &:hover {
+      background-color: #1e293b !important;
+      border-color: #14b8a6 !important;
+      color: #14b8a6 !important;
+    }
+
+    &:active {
+      transform: scale(0.96) !important;
+    }
+
+    .hamburger {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      color: #f8fafc !important;
+
+      &:hover {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      &__open-icon,
+      &__close-icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 20px !important;
+        height: 20px !important;
+        margin: 0 auto !important;
+
+        svg {
+          width: 20px !important;
+          height: 20px !important;
+          stroke: #f8fafc !important;
+          fill: none !important;
+          display: block !important;
+        }
+      }
+    }
+  }
 }
 
 aside.nav.charlie-admin-sidebar .nav__scroll {
@@ -299,8 +482,21 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   background-color: #151c28 !important;
   border: 1px solid #232d3f !important;
   border-radius: 12px !important;
-  overflow: hidden !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  position: relative !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.collection-list .table table,
+.table table {
+  width: 100% !important;
+  min-width: 600px !important;
 }
 
 .table thead th,
@@ -333,6 +529,7 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   border: 1px solid #232d3f !important;
   color: #ffffff !important;
   border-radius: 8px !important;
+  max-width: 100% !important;
 
   &:focus {
     border-color: #14b8a6 !important;
@@ -365,6 +562,9 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   border: 1px solid #232d3f !important;
   color: #ffffff !important;
   border-radius: 8px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .field-type label,
@@ -480,6 +680,10 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   border: 1px solid #2d3b54;
   border-radius: 6px;
   font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .charlie-btn--sm:hover {
@@ -1021,35 +1225,378 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   text-decoration: underline;
 }
 
-/* Responsive Breakpoints */
-@media (max-width: 1200px) {
+/* ==========================================================================
+   7. COMPREHENSIVE RESPONSIVE BREAKPOINTS (320px to 1024px)
+   Strictly scoped: Mobile/Tablet responsive enhancements preserving finalized desktop layout
+   ========================================================================== */
+
+/* --- Tablet Breakpoint (1024px and below) --- */
+@media (max-width: 1024px) {
   .charlie-kpi-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   .charlie-automation-metrics {
     grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  /* Collection list view headers */
+  .collection-list__header {
+    margin-bottom: 16px;
+  }
+
+  .collection-list__header h1,
+  .doc-header h1,
+  .doc-header__title,
+  .view-description__title {
+    font-size: 1.85rem !important;
+  }
+
+  /* Ensure drawer / popup containment */
+  .drawer {
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
+  .drawer__content {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
   }
 }
 
+/* --- Small Tablet & Large Phone Breakpoint (768px and below) --- */
 @media (max-width: 768px) {
+  /* Dashboard layout */
   .charlie-admin-dashboard {
     padding: 20px 16px 48px;
+    gap: 22px;
   }
 
   .charlie-dash-header {
     flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding-bottom: 18px;
   }
 
+  .charlie-dash-header h1 {
+    font-size: 1.75rem !important;
+  }
+
+  .charlie-dash-subtitle {
+    font-size: 0.84rem !important;
+    line-height: 1.45;
+  }
+
+  .charlie-dash-header-actions {
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .charlie-dash-header-actions .charlie-btn {
+    flex: 1 1 auto;
+    min-height: 42px;
+    text-align: center;
+  }
+
+  /* Stacking KPI & Shortcut cards vertically */
   .charlie-kpi-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .charlie-kpi-card {
+    padding: 18px 20px;
+  }
+
+  .charlie-kpi-desc {
+    min-height: unset;
+    margin-bottom: 12px;
+  }
+
+  .charlie-kpi-number {
+    font-size: 2.5rem;
   }
 
   .charlie-quick-shortcuts {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Automation Card */
+  .charlie-automation-card {
+    padding: 18px 20px;
+  }
+
+  .charlie-automation-headline {
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Review Queue Table Section */
+  .charlie-preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .charlie-preview-header h2 {
+    font-size: 1.35rem;
+  }
+
+  .charlie-preview-header .charlie-btn {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+  }
+
+  .charlie-table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .charlie-admin-table {
+    min-width: 600px;
+  }
+
+  .charlie-admin-table th,
+  .charlie-admin-table td {
+    padding: 10px 14px;
+  }
+
+  /* Native Collection List & Document Edit Views */
+  .collection-list__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .collection-list__header h1,
+  .doc-header h1,
+  .doc-header__title,
+  .view-description__title {
+    font-size: 1.65rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .collection-list__header a.btn,
+  .collection-list__header button.btn {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+  }
+
+  /* Native List Controls */
+  .list-controls {
+    gap: 10px;
+  }
+
+  .list-controls input,
+  .search-filter input {
+    min-height: 42px;
+    font-size: 0.9rem;
+  }
+
+  .list-controls .pill,
+  .pill {
+    min-height: 38px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+  }
+
+  /* Form Fields Stacking */
+  .field-type.row .row__fields > * {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-inline: 0 !important;
+  }
+
+  .field-type input[type='text'],
+  .field-type input[type='email'],
+  .field-type input[type='password'],
+  .field-type textarea,
+  .field-type select,
+  .react-select__control {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    min-height: 42px;
+  }
+
+  /* Document Action Buttons (Save, Publish, Delete) */
+  .doc-controls__controls {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .doc-controls__controls > * {
+    flex: 1 1 auto !important;
+    min-height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .doc-controls .btn--style-primary,
+  .doc-controls .btn--style-secondary {
+    min-height: 42px !important;
+    font-size: 0.88rem !important;
+    padding: 8px 16px !important;
+  }
+
+  /* App Header Bar on mobile */
+  .app-header__controls-wrapper {
+    min-width: 0;
+  }
+
+  .app-header__actions {
+    max-width: 180px !important;
+    overflow-x: auto;
+  }
+}
+
+/* --- Mobile Breakpoint (640px and below) --- */
+@media (max-width: 640px) {
+  .charlie-automation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .charlie-automation-title {
+    gap: 10px;
+  }
+
+  .charlie-automation-title h3 {
+    font-size: 1.15rem;
+  }
+
+  /* Lexical Editor Content Padding on Mobile */
+  .rich-text-lexical--show-gutter > .rich-text-lexical__wrap > .editor-container > .editor-scroller > .editor > .ContentEditable__root {
+    padding-left: 1rem !important;
+    padding-right: 0.75rem !important;
+    word-break: break-word !important;
+    font-size: 15px !important;
+  }
+
+  .rich-text-lexical--show-gutter > .rich-text-lexical__wrap > .editor-container > .editor-scroller > .editor > div > .LexicalEditorTheme__placeholder {
+    left: 1rem !important;
+  }
+
+  .fixed-toolbar {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex-wrap: wrap !important;
+    padding: 6px !important;
+  }
+
+  .fixed-toolbar button {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+}
+
+/* --- Standard & Compact Phones Breakpoint (480px and below) --- */
+@media (max-width: 480px) {
+  .charlie-admin-dashboard {
+    padding: 16px 12px 40px;
+    gap: 18px;
+  }
+
+  .charlie-dash-header-actions .charlie-btn {
+    flex: 1 1 100%;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .charlie-empty-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .charlie-empty-actions .charlie-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Modal Dialogs */
+  .modal,
+  .dialog {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px auto !important;
+  }
+
+  .popup__content {
+    max-width: calc(100vw - 20px) !important;
+  }
+}
+
+/* --- Small Mobile Phones Breakpoint (400px down to 320px) --- */
+@media (max-width: 400px) {
+  .charlie-admin-dashboard {
+    padding: 14px 10px 36px;
+    gap: 16px;
+  }
+
+  .charlie-dash-header h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .charlie-dash-subtitle {
+    font-size: 0.78rem !important;
+  }
+
+  .charlie-kpi-number {
+    font-size: 2.2rem;
   }
 
   .charlie-automation-metrics {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .charlie-auto-val {
+    font-size: 1.05rem;
+  }
+
+  .charlie-draft-thumb,
+  .charlie-draft-thumb-placeholder {
+    width: 48px;
+    height: 38px;
+  }
+
+  .charlie-draft-headline {
+    font-size: 0.88rem;
+  }
+
+  .collection-list__header h1,
+  .doc-header h1,
+  .doc-header__title,
+  .view-description__title {
+    font-size: 1.45rem !important;
+  }
+
+  .charlie-sidebar-content {
+    padding: 16px 10px;
+  }
+
+  .charlie-nav-link {
+    padding: 9px 10px;
+    font-size: 0.84rem;
+  }
+
+  .charlie-sidebar-header {
+    padding: 18px 14px 14px;
   }
 }
+

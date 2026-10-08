@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export interface ArticleItem {
   id?: number | string
@@ -64,16 +65,21 @@ export function ArticleCard({ article, sectionSlug, sectionName }: ArticleCardPr
 
   return (
     <article className="news-card">
-      <Link href={articleHref} className="card-image-box">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <Link
+        href={articleHref}
+        className="card-image-box"
+        aria-label={`Read story: ${article.headline}`}
+      >
+        <Image
           src={imageUrl}
           alt={article.imageAlt || article.headline}
-          loading="lazy"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 380px"
+          style={{ objectFit: 'cover' }}
         />
       </Link>
       <div className="card-body">
-        <Link href={`/${resolvedSectionSlug}`}>
+        <Link href={`/${resolvedSectionSlug}`} aria-label={`Section: ${resolvedSectionName}`}>
           <span className={`badge-tag ${badgeClass}`}>{resolvedSectionName}</span>
         </Link>
         <Link href={articleHref}>
@@ -81,8 +87,8 @@ export function ArticleCard({ article, sectionSlug, sectionName }: ArticleCardPr
         </Link>
         <p className="card-summary">{article.summary}</p>
         <div className="card-footer">
-          <span>{formattedDate}</span>
-          <span>Read Story →</span>
+          <time dateTime={dateStr || undefined}>{formattedDate}</time>
+          <span aria-hidden="true">Read Story →</span>
         </div>
       </div>
     </article>

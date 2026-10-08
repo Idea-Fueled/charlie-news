@@ -49,6 +49,10 @@ export const AutomationRuns: CollectionConfig = {
       defaultValue: 'Success',
       options: [
         {
+          label: 'Running',
+          value: 'Running',
+        },
+        {
           label: 'Success',
           value: 'Success',
         },
@@ -59,6 +63,10 @@ export const AutomationRuns: CollectionConfig = {
         {
           label: 'Failed',
           value: 'Failed',
+        },
+        {
+          label: 'Skipped',
+          value: 'Skipped',
         },
       ],
       admin: {

@@ -110,7 +110,11 @@ function renderNode(
 
   // 4. Headings
   if (node.type === 'heading') {
-    const Tag = (node.tag || 'h2') as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+    // Demote h1 to h2 in article body to ensure a single h1 per page for WCAG compliance
+    let Tag = (node.tag || 'h2') as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+    if (Tag === 'h1') {
+      Tag = 'h2'
+    }
     let headingId: string | undefined = undefined
 
     if (Tag === 'h2' && slugCounts) {

@@ -164,51 +164,101 @@ export const AdminNav: React.FC<NavProps> = ({ user }) => {
   ]
 
   return (
-    <aside
-      className={`nav ${navOpen ? 'nav--nav-open' : ''} ${hydrated ? 'nav--nav-hydrated' : ''} charlie-admin-sidebar`}
-    >
-      <div className="nav__scroll" ref={navRef}>
-        <div className="charlie-sidebar-inner">
-          {/* Sidebar Header with Brand */}
-          <div className="charlie-sidebar-header">
-            <Link
-              href="/admin"
-              className="charlie-sidebar-brand"
-              onClick={handleNavClick}
-            >
-              <AdminLogo />
-            </Link>
-            <span className="charlie-sidebar-tagline">Editorial CMS</span>
-          </div>
-
-          {/* Main Navigation Section */}
-          <div className="charlie-sidebar-content">
-            <div className="charlie-nav-group-label">EDITORIAL MANAGEMENT</div>
-            <nav className="charlie-nav-menu">
-              {navItems.map((item) => (
+    <>
+      <aside
+        className={`nav ${navOpen ? 'nav--nav-open' : ''} ${hydrated ? 'nav--nav-hydrated' : ''} charlie-admin-sidebar`}
+      >
+        <div className="nav__scroll" ref={navRef}>
+          <div className="charlie-sidebar-inner">
+            {/* Sidebar Header with Brand & Mobile Close Button */}
+            <div className="charlie-sidebar-header">
+              <div className="charlie-sidebar-header-top">
                 <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`charlie-nav-link ${item.isActive ? 'charlie-nav-link--active' : ''}`}
+                  href="/admin"
+                  className="charlie-sidebar-brand"
                   onClick={handleNavClick}
                 >
-                  <span className="charlie-nav-icon">{item.icon}</span>
-                  <span className="charlie-nav-label">{item.label}</span>
-                  {item.badge && <span className="charlie-nav-badge">{item.badge}</span>}
+                  <AdminLogo />
                 </Link>
-              ))}
-            </nav>
+                <button
+                  type="button"
+                  className="charlie-sidebar-close-btn"
+                  onClick={() => setNavOpen?.(false)}
+                  aria-label="Close navigation"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+              <span className="charlie-sidebar-tagline">Editorial CMS</span>
+            </div>
 
-            {/* Public Website Preview Shortcut */}
-            <div className="charlie-sidebar-divider" />
-            <div className="charlie-nav-group-label">PUBLICATION</div>
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="charlie-nav-link charlie-nav-link--external"
-            >
-              <span className="charlie-nav-icon">
+            {/* Main Navigation Section */}
+            <div className="charlie-sidebar-content">
+              <div className="charlie-nav-group-label">EDITORIAL MANAGEMENT</div>
+              <nav className="charlie-nav-menu">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={`charlie-nav-link ${item.isActive ? 'charlie-nav-link--active' : ''}`}
+                    onClick={handleNavClick}
+                  >
+                    <span className="charlie-nav-icon">{item.icon}</span>
+                    <span className="charlie-nav-label">{item.label}</span>
+                    {item.badge && <span className="charlie-nav-badge">{item.badge}</span>}
+                  </Link>
+                ))}
+              </nav>
+
+              {/* Public Website Preview Shortcut */}
+              <div className="charlie-sidebar-divider" />
+              <div className="charlie-nav-group-label">PUBLICATION</div>
+              <a
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="charlie-nav-link charlie-nav-link--external"
+              >
+                <span className="charlie-nav-icon">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                </span>
+                <span className="charlie-nav-label">View Live Website</span>
+                <span className="charlie-nav-external-arrow">↗</span>
+              </a>
+            </div>
+
+            {/* Sidebar Footer: Red Logout Button Only */}
+            <div className="charlie-sidebar-footer">
+              <Link
+                href="/admin/logout"
+                className="charlie-logout-btn-red"
+                title="Log Out"
+              >
                 <svg
                   width="18"
                   height="18"
@@ -219,43 +269,24 @@ export const AdminNav: React.FC<NavProps> = ({ user }) => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="2" y1="12" x2="22" y2="12" />
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
-              </span>
-              <span className="charlie-nav-label">View Live Website</span>
-              <span className="charlie-nav-external-arrow">↗</span>
-            </a>
-          </div>
-
-          {/* Sidebar Footer: Red Logout Button Only */}
-          <div className="charlie-sidebar-footer">
-            <Link
-              href="/admin/logout"
-              className="charlie-logout-btn-red"
-              title="Log Out"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-              <span>Log out</span>
-            </Link>
+                <span>Log out</span>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+      {navOpen && (
+        <div
+          className="charlie-nav-backdrop"
+          onClick={() => setNavOpen?.(false)}
+          aria-hidden="true"
+        />
+      )}
+    </>
   )
 }
 

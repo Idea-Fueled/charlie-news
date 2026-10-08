@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArticleCard } from '@/components/ArticleCard'
 import {
   getActiveSections,
@@ -8,12 +9,60 @@ import {
 
 import type { Metadata } from 'next'
 
+import { getSiteUrl, toAbsoluteImageUrl, DEFAULT_OG_IMAGE } from '@/lib/seo'
+
 export const dynamic = 'force-dynamic'
 
-export const metadata: Metadata = {
-  title: 'Charlie News | Australian Property News & Market Intelligence',
-  description:
-    'Australian property news covering renovations, housing policy, market trends, and real estate politics across Sydney, Melbourne, Brisbane, and regional Australia.',
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = getSiteUrl()
+  const title = 'Charlie News | Australian Property News & Market Intelligence'
+  const description =
+    'Australian property news covering renovations, housing policy, market trends, and real estate politics across Sydney, Melbourne, Brisbane, and regional Australia.'
+
+  let leadImageUrl = DEFAULT_OG_IMAGE
+  let leadImageAlt = 'Charlie News | Australian Property News & Market Intelligence'
+
+  try {
+    const { articles } = await getAllPublishedArticles()
+    if (articles?.[0]?.image?.url) {
+      leadImageUrl = articles[0].image.url
+      leadImageAlt = articles[0].imageAlt || articles[0].headline || leadImageAlt
+    }
+  } catch {
+    // Keep DEFAULT_OG_IMAGE on fallback
+  }
+
+  const ogImageUrl = toAbsoluteImageUrl(leadImageUrl)
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: siteUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: siteUrl,
+      siteName: 'Charlie News',
+      locale: 'en_AU',
+      type: 'website',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: leadImageAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
+    },
+  }
 }
 
 export default async function HomePage() {
@@ -74,24 +123,28 @@ export default async function HomePage() {
 
       {/* TOP STORY (Hero Lead Article) - SOW 4.2 */}
       {topStory && (
-        <section className="hero-section">
+        <section className="hero-section" aria-label="Lead story">
           <div className="hero-card">
             <Link
               href={`/${topStorySectionSlug}/${topStory.slug}`}
               className="hero-image-wrapper"
+              aria-label={`Read story: ${topStory.headline}`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={
                   topStory.image?.url ||
                   'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'
                 }
                 alt={topStory.imageAlt || topStory.headline}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                style={{ objectFit: 'cover' }}
               />
             </Link>
 
             <div className="hero-content">
-              <Link href={`/${topStorySectionSlug}`}>
+              <Link href={`/${topStorySectionSlug}`} aria-label={`Section: ${topStorySectionName}`}>
                 <span className={`badge-tag ${topStoryBadgeClass}`}>
                   {topStorySectionName}
                 </span>
@@ -101,15 +154,16 @@ export default async function HomePage() {
               </Link>
               <p className="hero-summary">{topStory.summary}</p>
               <div className="meta-row">
-                <span className="meta-date">{formattedTopDate}</span>
-                <span className="meta-dot"></span>
+                <time className="meta-date" dateTime={topStoryDate || undefined}>{formattedTopDate}</time>
+                <span className="meta-dot" aria-hidden="true"></span>
                 <span>Sydney, AU</span>
-                <span className="meta-dot"></span>
+                <span className="meta-dot" aria-hidden="true"></span>
                 <Link
                   href={`/${topStorySectionSlug}/${topStory.slug}`}
+                  aria-label={`Read full story: ${topStory.headline}`}
                   style={{ color: 'var(--color-accent)', fontWeight: 600 }}
                 >
-                  Full Story →
+                  Full Story <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>
@@ -119,9 +173,9 @@ export default async function HomePage() {
 
       {/* LATEST ARTICLES GRID (Next 12 articles) - SOW 4.2 */}
       {gridArticles.length > 0 && (
-        <section className="section-block">
+        <section className="section-block" aria-labelledby="latest-news-heading">
           <div className="section-header-bar">
-            <h2 className="section-heading">Latest Property News</h2>
+            <h2 id="latest-news-heading" className="section-heading">Latest Property News</h2>
             <span style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)' }}>
               Updated 4x Daily
             </span>
@@ -138,10 +192,14 @@ export default async function HomePage() {
       {sectionRows.map(
         ({ section, articles: secArticles }) =>
           secArticles.length > 0 && (
-            <section key={section.slug} className="section-block">
+            <section
+              key={section.slug}
+              className="section-block"
+              aria-labelledby={`section-heading-${section.slug}`}
+            >
               <div className="section-header-bar">
                 <div>
-                  <h2 className="section-heading">{section.name}</h2>
+                  <h2 id={`section-heading-${section.slug}`} className="section-heading">{section.name}</h2>
                   {section.description && (
                     <p
                       style={{
@@ -155,7 +213,7 @@ export default async function HomePage() {
                   )}
                 </div>
                 <Link href={`/${section.slug}`} className="section-see-all">
-                  See all {section.name} →
+                  See all {section.name} <span aria-hidden="true">→</span>
                 </Link>
               </div>
 
