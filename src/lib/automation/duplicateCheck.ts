@@ -59,6 +59,94 @@ export function generateSourceFingerprint(sourceUrl: string, headline: string): 
   return `${normUrl}|${normTitle}`
 }
 
+export interface DuplicateChecker {
+  isDuplicate(sourceUrl: string, headline: string): { isDuplicate: boolean; reason?: string }
+}
+
+/**
+ * Creates an in-memory duplicate checker loaded from the 14-day database window in a single query.
+ * Replaces hundreds of repetitive sequential database round-trips with instant in-memory lookups.
+ */
+export async function createDuplicateChecker(
+  payload: Payload,
+  windowDays = AUTOMATION_CONFIG.DUPLICATE_WINDOW_DAYS,
+): Promise<DuplicateChecker> {
+  const cutoffDate = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString()
+
+  // Single batch fetch of all articles within the 14-day window (depth: 0 for minimal payload)
+  const recentArticles = await payload.find({
+    collection: 'articles',
+    where: {
+      createdAt: { greater_than_equal: cutoffDate },
+    },
+    limit: 500,
+    depth: 0,
+  })
+
+  const fingerprints = new Map<string, { headline: string; createdAt: string }>()
+  const urls = new Map<string, { headline: string; createdAt: string }>()
+  const headlines = new Map<string, { headline: string; createdAt: string }>()
+
+  for (const art of recentArticles.docs || []) {
+    const artHeadline = art.headline || ''
+    const artDate = art.createdAt || ''
+
+    if (art.sourceFingerprint) {
+      fingerprints.set(art.sourceFingerprint, { headline: artHeadline, createdAt: artDate })
+    }
+    if (art.sourceUrl) {
+      urls.set(art.sourceUrl.trim(), { headline: artHeadline, createdAt: artDate })
+      const clean = normalizeUrl(art.sourceUrl)
+      if (clean) urls.set(clean, { headline: artHeadline, createdAt: artDate })
+    }
+    const normHead = normalizeHeadline(artHeadline)
+    if (normHead) {
+      headlines.set(normHead, { headline: artHeadline, createdAt: artDate })
+    }
+  }
+
+  return {
+    isDuplicate(sourceUrl: string, headline: string): { isDuplicate: boolean; reason?: string } {
+      const fingerprint = generateSourceFingerprint(sourceUrl, headline)
+      const cleanUrl = normalizeUrl(sourceUrl)
+      const cleanTitle = normalizeHeadline(headline)
+
+      // 1. Exact fingerprint match
+      const matchedFp = fingerprints.get(fingerprint)
+      if (matchedFp) {
+        return {
+          isDuplicate: true,
+          reason: `Story fingerprint matches "${matchedFp.headline}" created on ${matchedFp.createdAt} (within ${windowDays} days)`,
+        }
+      }
+
+      // 2. Source URL match
+      if (cleanUrl) {
+        const matchedUrl = urls.get(cleanUrl) || urls.get(sourceUrl.trim())
+        if (matchedUrl) {
+          return {
+            isDuplicate: true,
+            reason: `Source URL matches "${matchedUrl.headline}" created on ${matchedUrl.createdAt} (within ${windowDays} days)`,
+          }
+        }
+      }
+
+      // 3. Normalized headline match
+      if (cleanTitle) {
+        const matchedHead = headlines.get(cleanTitle)
+        if (matchedHead) {
+          return {
+            isDuplicate: true,
+            reason: `Headline strongly matches existing article "${matchedHead.headline}" created on ${matchedHead.createdAt} (within ${windowDays} days)`,
+          }
+        }
+      }
+
+      return { isDuplicate: false }
+    },
+  }
+}
+
 /**
  * Checks if a candidate story was already processed within the previous 14 days
  */
@@ -68,74 +156,6 @@ export async function isDuplicateStory(
   headline: string,
   windowDays = AUTOMATION_CONFIG.DUPLICATE_WINDOW_DAYS,
 ): Promise<{ isDuplicate: boolean; reason?: string }> {
-  const cutoffDate = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000).toISOString()
-  const fingerprint = generateSourceFingerprint(sourceUrl, headline)
-  const cleanUrl = normalizeUrl(sourceUrl)
-  const cleanTitle = normalizeHeadline(headline)
-
-  // 1. Check exact fingerprint match within 14 days
-  const byFingerprint = await payload.find({
-    collection: 'articles',
-    where: {
-      and: [
-        { sourceFingerprint: { equals: fingerprint } },
-        { createdAt: { greater_than_equal: cutoffDate } },
-      ],
-    },
-    limit: 1,
-  })
-
-  if (byFingerprint.totalDocs && byFingerprint.totalDocs > 0) {
-    const existing = byFingerprint.docs[0]
-    return {
-      isDuplicate: true,
-      reason: `Story fingerprint matches "${existing.headline}" created on ${existing.createdAt} (within ${windowDays} days)`,
-    }
-  }
-
-  // 2. Check sourceUrl match within 14 days
-  if (cleanUrl) {
-    const byUrl = await payload.find({
-      collection: 'articles',
-      where: {
-        and: [
-          { sourceUrl: { equals: sourceUrl } },
-          { createdAt: { greater_than_equal: cutoffDate } },
-        ],
-      },
-      limit: 1,
-    })
-
-    if (byUrl.totalDocs && byUrl.totalDocs > 0) {
-      const existing = byUrl.docs[0]
-      return {
-        isDuplicate: true,
-        reason: `Source URL matches "${existing.headline}" created on ${existing.createdAt} (within ${windowDays} days)`,
-      }
-    }
-  }
-
-  // 3. Check normalized headline match within 14 days
-  if (cleanTitle) {
-    const recentArticles = await payload.find({
-      collection: 'articles',
-      where: {
-        createdAt: { greater_than_equal: cutoffDate },
-      },
-      limit: 50,
-      depth: 0,
-    })
-
-    for (const art of recentArticles.docs || []) {
-      const existingNorm = normalizeHeadline(art.headline || '')
-      if (existingNorm === cleanTitle) {
-        return {
-          isDuplicate: true,
-          reason: `Headline strongly matches existing article "${art.headline}" created on ${art.createdAt} (within ${windowDays} days)`,
-        }
-      }
-    }
-  }
-
-  return { isDuplicate: false }
+  const checker = await createDuplicateChecker(payload, windowDays)
+  return checker.isDuplicate(sourceUrl, headline)
 }

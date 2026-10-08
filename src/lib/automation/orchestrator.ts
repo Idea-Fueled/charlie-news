@@ -12,7 +12,7 @@ import {
   getSectionHintForFeedUrl,
 } from '@/config/automation'
 import { fetchRssFeed, RawRssStory } from './rss'
-import { isDuplicateStory, generateSourceFingerprint } from './duplicateCheck'
+import { createDuplicateChecker, generateSourceFingerprint } from './duplicateCheck'
 import {
   generateArticleWithClaude,
   SectionMetadata,
@@ -84,6 +84,7 @@ export async function runClaudeAutomation(
   payload: Payload,
   options: AutomationExecutionOptions = {},
 ): Promise<AutomationExecutionReport> {
+  const runStartTime = Date.now()
   const errorLogs: string[] = []
   let storiesChecked = 0
   let draftsCreated = 0
@@ -191,30 +192,48 @@ export async function runClaudeAutomation(
       }
     }
 
-    // 4. Fetch Available Stories from Approved RSS Sources
-    const rawStories: RawRssStory[] = []
-    for (const feedUrl of rssFeedUrls) {
+    // 4. Fetch Available Stories from Approved RSS Sources concurrently
+    const rssStartTime = Date.now()
+    const feedPromises = rssFeedUrls.map(async (feedUrl) => {
       const feedResult = await fetchRssFeed(feedUrl)
-      if (!feedResult.success) {
-        errorLogs.push(`RSS source failure: ${feedResult.error}`)
-      } else {
-        const sectionHint = getSectionHintForFeedUrl(feedUrl)
-        for (const story of feedResult.stories) {
-          rawStories.push({
-            ...story,
-            feedUrl,
-            sectionHint: sectionHint || undefined,
-          })
+      return { feedUrl, feedResult }
+    })
+    const settledFeeds = await Promise.allSettled(feedPromises)
+    const rawStories: RawRssStory[] = []
+
+    for (const item of settledFeeds) {
+      if (item.status === 'fulfilled') {
+        const { feedUrl, feedResult } = item.value
+        if (!feedResult.success) {
+          errorLogs.push(`RSS source failure: ${feedResult.error}`)
+        } else {
+          const sectionHint = getSectionHintForFeedUrl(feedUrl)
+          for (const story of feedResult.stories) {
+            rawStories.push({
+              ...story,
+              feedUrl,
+              sectionHint: sectionHint || undefined,
+            })
+          }
         }
+      } else {
+        errorLogs.push(`RSS source exception: ${item.reason?.message || String(item.reason)}`)
       }
     }
 
+    const rssDuration = Date.now() - rssStartTime
+    console.log(
+      `[Claude Automation] RSS start/end duration: ${rssDuration}ms (${rssFeedUrls.length} feeds fetched, ${rawStories.length} stories collected)`,
+    )
+
     storiesChecked = rawStories.length
 
-    // 5. Filter Stories using 14-Day Duplicate Protection
+    // 5. Filter Stories using 14-Day Duplicate Protection (batch pre-cached in memory)
+    const dupStartTime = Date.now()
+    const dupChecker = await createDuplicateChecker(payload)
     const eligibleStories: RawRssStory[] = []
     for (const story of rawStories) {
-      const dupCheck = await isDuplicateStory(payload, story.link, story.title)
+      const dupCheck = dupChecker.isDuplicate(story.link, story.title)
       if (dupCheck.isDuplicate) {
         // Skipped as duplicate
         continue
@@ -222,15 +241,28 @@ export async function runClaudeAutomation(
       eligibleStories.push(story)
     }
 
+    const dupDuration = Date.now() - dupStartTime
+    console.log(
+      `[Claude Automation] Duplicate check duration: ${dupDuration}ms (${rawStories.length} stories evaluated, ${eligibleStories.length} eligible, ${rawStories.length - eligibleStories.length} duplicates filtered)`,
+    )
+
     // 6. Limit processing to SOW max 2 drafts per run
     const selectedStories = eligibleStories.slice(0, AUTOMATION_CONFIG.MAX_DRAFTS_PER_RUN)
 
     // 7. Process Selected Stories with Claude
-    for (const story of selectedStories) {
+    for (let i = 0; i < selectedStories.length; i++) {
+      const story = selectedStories[i]
+      const storyLabel = `draft ${i + 1}/${selectedStories.length}`
+
+      const claudeStartTime = Date.now()
       const claudeRes = await generateArticleWithClaude(story, activeSections, {
         useMock: options.useMock,
         mockData: options.mockData,
       })
+      const claudeDuration = Date.now() - claudeStartTime
+      console.log(
+        `[Claude Automation] Claude request duration: ${claudeDuration}ms for ${storyLabel}`,
+      )
 
       if (!claudeRes.success || !claudeRes.data) {
         errorLogs.push(
@@ -289,10 +321,15 @@ export async function runClaudeAutomation(
       const fingerprint = generateSourceFingerprint(story.link, story.title)
 
       // 9.5 Resolve Article Photo via Unsplash (Primary & only automated provider)
+      const unsplashStartTime = Date.now()
       const photoResult = await resolveArticlePhoto(generated.photoSearchWords, {
         useMock: options.useMock,
         ...options.mockPhotoOptions,
       })
+      const unsplashDuration = Date.now() - unsplashStartTime
+      console.log(
+        `[Claude Automation] Unsplash duration: ${unsplashDuration}ms for ${storyLabel} (found: ${photoResult.found})`,
+      )
 
       const articleData: any = {
         headline: generated.headline,
@@ -338,15 +375,24 @@ export async function runClaudeAutomation(
       }
 
       // 10. Create Article in Review Queue as DRAFT (Never Auto-Publish)
+      const dbWriteStartTime = Date.now()
       try {
         const articleDoc = await payload.create({
           collection: 'articles',
           data: articleData,
         })
+        const dbWriteDuration = Date.now() - dbWriteStartTime
+        console.log(
+          `[Claude Automation] DB write duration: ${dbWriteDuration}ms for ${storyLabel} (article ID: ${articleDoc.id})`,
+        )
 
         draftsCreated += 1
         draftIds.push(articleDoc.id)
       } catch (saveErr: any) {
+        const dbWriteDuration = Date.now() - dbWriteStartTime
+        console.log(
+          `[Claude Automation] DB write duration: ${dbWriteDuration}ms (failed for ${storyLabel})`,
+        )
         errorLogs.push(
           `Database save error for "${generated.headline}": ${saveErr.message || String(saveErr)}`,
         )
@@ -360,6 +406,11 @@ export async function runClaudeAutomation(
     } else if (errorLogs.length > 0 && draftsCreated === 0) {
       runResult = 'Failed'
     }
+
+    const totalDuration = Date.now() - runStartTime
+    console.log(
+      `[Claude Automation] Total duration: ${totalDuration}ms (result: ${runResult}, drafts: ${draftsCreated})`,
+    )
 
     // 12. Finalize Run Record and Release Lock
     await releaseRunLock(payload, runId, {
@@ -387,6 +438,10 @@ export async function runClaudeAutomation(
   } catch (err: any) {
     const fatalMsg = `Unhandled automation failure: ${err.message || String(err)}`
     errorLogs.push(fatalMsg)
+    const totalDuration = Date.now() - runStartTime
+    console.log(
+      `[Claude Automation] Total duration: ${totalDuration}ms (result: Failed, error: ${fatalMsg})`,
+    )
 
     await releaseRunLock(payload, runId, {
       result: 'Failed',
