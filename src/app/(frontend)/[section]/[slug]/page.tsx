@@ -36,8 +36,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const { article } = res
   const siteUrl = getSiteUrl()
   const canonicalUrl = `${siteUrl}/${sectionSlug}/${article.slug}`
-  const description = article.seoDescription || article.summary
-  const articleImageUrl = toAbsoluteImageUrl(article.image?.url)
+  const description = article.seoDescription || article.summary || article.headline
+  const articleImageUrl = toAbsoluteImageUrl(article.image?.url || article.image)
   const imageAlt = article.imageAlt || article.headline
 
   return {
@@ -59,9 +59,11 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       images: [
         {
           url: articleImageUrl,
-          width: article.image?.width || 1200,
-          height: article.image?.height || 630,
+          secureUrl: articleImageUrl,
+          width: 1200,
+          height: 630,
           alt: imageAlt,
+          type: 'image/jpeg',
         },
       ],
     },
@@ -69,7 +71,12 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       card: 'summary_large_image',
       title: article.headline,
       description,
-      images: [articleImageUrl],
+      images: [
+        {
+          url: articleImageUrl,
+          alt: imageAlt,
+        },
+      ],
     },
   }
 }
@@ -153,6 +160,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const siteUrl = getSiteUrl()
   const canonicalUrl = `${siteUrl}/${sectionSlug}/${article.slug}`
 
+  const featuredImageUrl =
+    article.image?.url || (typeof article.image === 'string' ? article.image : null)
+
   // NewsArticle JSON-LD Structured Data (Schema.org)
   const newsArticleJsonLd = {
     '@context': 'https://schema.org',
@@ -166,9 +176,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     url: canonicalUrl,
     datePublished: article.publishedAt || article.createdAt,
     dateModified: article.updatedAt || article.publishedAt || article.createdAt,
-    ...(article.image?.url
+    ...(featuredImageUrl
       ? {
-          image: [article.image.url],
+          image: [toAbsoluteImageUrl(featuredImageUrl)],
         }
       : {}),
     publisher: {
@@ -248,10 +258,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* RIGHT COLUMN: Featured Photo + Article Body Content */}
         <div className="article-main-col">
           {/* Featured Photo at the top of the right column */}
-          {article.image?.url && (
+          {featuredImageUrl && (
             <div className="article-featured-image-box">
               <Image
-                src={article.image.url}
+                src={featuredImageUrl}
                 alt={article.imageAlt || article.headline}
                 width={1200}
                 height={675}

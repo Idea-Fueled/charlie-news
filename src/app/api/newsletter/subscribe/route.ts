@@ -70,12 +70,17 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    // Log failure category server-side without leaking private tokens
+    console.error(
+      `[Newsletter Endpoint] Subscription failed: ${result.errorType || 'UNKNOWN'} | Detail: ${result.errorDetail || 'none'}`,
+    )
+
     return NextResponse.json(
       {
         success: false,
         message: result.message,
       },
-      { status: 500 },
+      { status: result.errorType === 'VALIDATION' ? 400 : 500 },
     )
   } catch (err: any) {
     console.error('[Newsletter Endpoint Error]', err?.message || String(err))
@@ -87,4 +92,26 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     )
   }
+}
+
+/**
+ * Safe, read-only diagnostic check for verifying production environment configuration.
+ * Strictly verifies presence/length/prefix without exposing any private keys or tokens.
+ */
+export async function GET() {
+  const apiKey = process.env.KLAVIYO_PRIVATE_API_KEY?.trim()
+  const listId = process.env.KLAVIYO_LIST_ID?.trim()
+
+  return NextResponse.json({
+    service: 'Klaviyo Newsletter',
+    status: 'active',
+    configured: Boolean(apiKey && listId),
+    diagnostics: {
+      hasApiKey: Boolean(apiKey),
+      apiKeyPrefix: apiKey ? apiKey.slice(0, 3) : null,
+      apiKeyLength: apiKey ? apiKey.length : 0,
+      hasListId: Boolean(listId),
+      listIdLength: listId ? listId.length : 0,
+    },
+  })
 }

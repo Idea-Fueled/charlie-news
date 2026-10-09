@@ -1600,3 +1600,278 @@ aside.nav.charlie-admin-sidebar .nav__scroll {
   }
 }
 
+/* ==========================================================================
+   10. CHARLIE NEWS GLASSMORPHISM ADMIN LOGIN CARD
+   Modern, elegant glassmorphic authentication card for Payload CMS
+   - Semi-transparent dark navy/black background with backdrop blur
+   - Refined translucent border and soft specular light highlights
+   - Subtle background teal and blue radial gradients
+   - Polished input fields with tasteful teal focus rings
+   - Distinctive Charlie News teal gradient submit button
+   ========================================================================== */
+
+section.template-minimal,
+section.login.template-minimal {
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  padding: 32px 16px !important;
+  box-sizing: border-box !important;
+  background-color: #080b11 !important;
+  background-image:
+    radial-gradient(ellipse 700px 480px at 50% 38%, rgba(15, 118, 110, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 550px 420px at 26% 68%, rgba(30, 58, 138, 0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 380px at 74% 62%, rgba(13, 148, 136, 0.08) 0%, transparent 70%) !important;
+  background-attachment: fixed !important;
+  overflow-x: hidden !important;
+}
+
+section.template-minimal .template-minimal__wrap,
+section.login.template-minimal .template-minimal__wrap {
+  width: 100% !important;
+  max-width: 460px !important;
+  margin: 0 auto !important;
+  padding: 44px 38px 40px !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 24px 60px -12px rgba(0, 0, 0, 0.75),
+    0 12px 28px -6px rgba(0, 0, 0, 0.55),
+    0 0 45px -10px rgba(15, 118, 110, 0.12) !important;
+  position: relative !important;
+  z-index: 10 !important;
+  box-sizing: border-box !important;
+}
+
+/* Branding Alignment & Spacing */
+.login__brand,
+.template-minimal .template-minimal__wrap > div:first-child {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  margin-bottom: 32px !important;
+  user-select: none !important;
+}
+
+/* Form Container */
+.login__form,
+.template-minimal form {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
+.login__form__inputWrap {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  margin-bottom: 14px !important;
+}
+
+/* Field Labels */
+.login__form .field-label,
+.template-minimal .field-label {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  letter-spacing: 0.01em !important;
+  margin-bottom: 7px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.login__form .field-label .required,
+.template-minimal .field-label .required {
+  color: #f87171 !important;
+  margin-left: 3px !important;
+}
+
+/* Inputs (Email, Text, Password) */
+.login__form input[type='text'],
+.login__form input[type='email'],
+.login__form input[type='password'],
+.template-minimal input[type='text'],
+.template-minimal input[type='email'],
+.template-minimal input[type='password'] {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 11px !important;
+  color: #f8fafc !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.92rem !important;
+  padding: 12px 14px !important;
+  line-height: 1.4 !important;
+  height: 44px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) inset !important;
+
+  &::placeholder {
+    color: #64748b !important;
+    opacity: 0.9 !important;
+  }
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    background: rgba(15, 23, 42, 0.75) !important;
+  }
+
+  &:focus {
+    border-color: #14b8a6 !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    outline: none !important;
+    box-shadow:
+      0 0 0 3px rgba(20, 184, 166, 0.22),
+      0 1px 2px rgba(0, 0, 0, 0.2) inset !important;
+  }
+}
+
+/* Password Toggle Icon */
+.login__form .password-field__toggle,
+.login__form .field-type.password button,
+.template-minimal .password-field__toggle {
+  color: #94a3b8 !important;
+  transition: color 0.15s ease !important;
+
+  &:hover {
+    color: #f8fafc !important;
+  }
+}
+
+/* Forgot Password Link */
+.login__form a,
+.login__form a.link,
+.template-minimal a,
+.template-minimal a.link {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  margin-top: 4px !important;
+  margin-bottom: 22px !important;
+  transition: all 0.15s ease !important;
+
+  &:hover {
+    color: #2dd4bf !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #14b8a6 !important;
+    outline-offset: 2px !important;
+    border-radius: 4px !important;
+  }
+}
+
+/* Login Submit Button */
+.login__form button[type='submit'],
+.login__form .form-submit,
+.login__form .btn--style-primary,
+.template-minimal button[type='submit'],
+.template-minimal .form-submit,
+.template-minimal .btn--style-primary {
+  width: 100% !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
+  border: 1px solid rgba(45, 212, 191, 0.45) !important;
+  border-radius: 11px !important;
+  color: #ffffff !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow:
+    0 4px 14px rgba(15, 118, 110, 0.35),
+    0 1px 1px rgba(255, 255, 255, 0.15) inset !important;
+  text-decoration: none !important;
+
+  &:hover {
+    background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%) !important;
+    border-color: rgba(94, 234, 212, 0.65) !important;
+    box-shadow:
+      0 6px 20px rgba(20, 184, 166, 0.45),
+      0 1px 1px rgba(255, 255, 255, 0.22) inset !important;
+    transform: translateY(-1px) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(15, 118, 110, 0.3) !important;
+  }
+
+  &:focus-visible {
+    outline: none !important;
+    box-shadow:
+      0 0 0 3px rgba(45, 212, 191, 0.45),
+      0 4px 14px rgba(15, 118, 110, 0.35) !important;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.65 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Form Errors & Alert States */
+.login__form .field-error,
+.template-minimal .field-error {
+  color: #f87171 !important;
+  font-size: 0.78rem !important;
+  margin-top: 5px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.login__form .form-error,
+.template-minimal .form-error {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  color: #fca5a5 !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 0.82rem !important;
+  margin-bottom: 16px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Mobile & Tablet Responsive Polish */
+@media (max-width: 640px) {
+  section.template-minimal,
+  section.login.template-minimal {
+    padding: 20px 12px !important;
+  }
+
+  section.template-minimal .template-minimal__wrap,
+  section.login.template-minimal .template-minimal__wrap {
+    padding: 34px 22px 30px !important;
+    border-radius: 18px !important;
+    max-width: 100% !important;
+  }
+
+  .login__brand,
+  .template-minimal .template-minimal__wrap > div:first-child {
+    margin-bottom: 24px !important;
+  }
+}
+

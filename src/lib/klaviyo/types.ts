@@ -2,10 +2,22 @@
  * Klaviyo Newsletter Integration Types
  */
 
+export type KlaviyoErrorType =
+  | 'AUTH'
+  | 'PERMISSION'
+  | 'INVALID_LIST'
+  | 'VALIDATION'
+  | 'RATE_LIMIT'
+  | 'SERVER_ERROR'
+  | 'NETWORK_ERROR'
+  | 'CONFIG_ERROR'
+
 export interface NewsletterSubscribeResult {
   success: boolean
   message: string
   isMock?: boolean
+  errorType?: KlaviyoErrorType
+  errorDetail?: string
 }
 
 export interface SubscribeOptions {

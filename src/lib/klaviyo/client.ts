@@ -10,6 +10,7 @@ import {
   NewsletterSubscribeResult,
   NEWSLETTER_MESSAGES,
   SubscribeOptions,
+  KlaviyoErrorType,
 } from './types'
 
 const KLAVIYO_API_URL =
@@ -91,7 +92,7 @@ export async function subscribeToNewsletter(
 
   if (!apiKey || !listId) {
     console.error(
-      '[Klaviyo] Missing credentials: KLAVIYO_PRIVATE_API_KEY or KLAVIYO_LIST_ID is not configured.',
+      `[Klaviyo Configuration Error] Missing credentials. Private API Key configured: ${Boolean(apiKey)}, List ID configured: ${Boolean(listId)}`,
     )
     // Fallback in dev/preview if client credentials are not yet supplied
     if (process.env.NODE_ENV !== 'production') {
@@ -104,6 +105,8 @@ export async function subscribeToNewsletter(
     return {
       success: false,
       message: NEWSLETTER_MESSAGES.API_ERROR,
+      errorType: 'CONFIG_ERROR',
+      errorDetail: 'Missing KLAVIYO_PRIVATE_API_KEY or KLAVIYO_LIST_ID',
     }
   }
 
@@ -191,24 +194,51 @@ export async function subscribeToNewsletter(
       }
     }
 
+    // Categorize error type safely without leaking private keys or tokens
+    let errorType: KlaviyoErrorType = 'SERVER_ERROR'
+    let errorCategory = 'Server Error'
+
+    if (response.status === 401) {
+      errorType = 'AUTH'
+      errorCategory = 'Authentication Failure (Invalid or revoked Private API Key)'
+    } else if (response.status === 403) {
+      errorType = 'PERMISSION'
+      errorCategory = 'Permission Denied (Private API Key is missing required scopes: lists:write)'
+    } else if (response.status === 404) {
+      errorType = 'INVALID_LIST'
+      errorCategory = `Resource Not Found (List ID "${listId}" does not exist in Klaviyo account)`
+    } else if (response.status === 400) {
+      errorType = 'VALIDATION'
+      errorCategory = 'Validation Error (Invalid request schema or malformed identifier)'
+    } else if (response.status === 429) {
+      errorType = 'RATE_LIMIT'
+      errorCategory = 'Rate Limit Exceeded (Too many requests to Klaviyo)'
+    } else if (response.status >= 500) {
+      errorType = 'SERVER_ERROR'
+      errorCategory = `Klaviyo Upstream Server Outage (HTTP ${response.status})`
+    }
+
     // Log error securely server-side without revealing secrets or private key
     console.error(
-      `[Klaviyo API Error] HTTP ${response.status}: ${firstError?.title || response.statusText} - ${errorDetail || 'No detail'}`,
+      `[Klaviyo API Error - ${errorCategory}] HTTP ${response.status}: ${firstError?.title || response.statusText} | Code: ${errorCode || 'none'} | Detail: ${firstError?.detail || 'No detail'}`,
     )
 
     return {
       success: false,
       message: NEWSLETTER_MESSAGES.API_ERROR,
+      errorType,
+      errorDetail: firstError?.detail || firstError?.title || response.statusText,
     }
   } catch (err: any) {
     const isTimeout = err.name === 'AbortError'
-    console.error(
-      `[Klaviyo Network Error] ${isTimeout ? 'Request timed out after 15s' : err.message || String(err)}`,
-    )
+    const errorMsg = isTimeout ? 'Request timed out after 15s' : err.message || String(err)
+    console.error(`[Klaviyo Network Error] ${errorMsg}`)
 
     return {
       success: false,
       message: NEWSLETTER_MESSAGES.API_ERROR,
+      errorType: 'NETWORK_ERROR',
+      errorDetail: errorMsg,
     }
   }
 }
