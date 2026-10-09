@@ -60,19 +60,23 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 3. Subscribe to Klaviyo list
+    // 3. Subscribe to Klaviyo list using Option B flow
     const result = await subscribeToNewsletter(email)
 
     if (result.success) {
       return NextResponse.json({
         success: true,
         message: result.message,
+        status:
+          result.optInProcess === 'double_opt_in'
+            ? 'pending_confirmation'
+            : 'subscribed',
       })
     }
 
-    // Log failure category server-side without leaking private tokens
+    // Log failure category server-side without leaking private tokens or email addresses
     console.error(
-      `[Newsletter Endpoint] Subscription failed: ${result.errorType || 'UNKNOWN'} | Detail: ${result.errorDetail || 'none'}`,
+      `[Newsletter Endpoint] Subscription failed: ${result.errorType || 'UNKNOWN'} | Detail: ${result.errorDetail || 'none'} | AddedToList: ${Boolean(result.addedToList)} | ConsentAccepted: ${Boolean(result.consentAccepted)}`,
     )
 
     return NextResponse.json(
