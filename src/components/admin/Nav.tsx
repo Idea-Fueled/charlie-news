@@ -118,6 +118,32 @@ export const AdminNav: React.FC<NavProps> = ({ user }) => {
       ),
     },
     {
+      label: 'Automation Runs',
+      href: '/admin/collections/automation-runs',
+      isActive: pathname.startsWith('/admin/collections/automation-runs'),
+      icon: (
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 2v4" />
+          <path d="m4.93 4.93 2.83 2.83" />
+          <path d="M2 12h4" />
+          <path d="m4.93 19.07 2.83-2.83" />
+          <path d="M12 22v-4" />
+          <path d="m19.07 19.07-2.83-2.83" />
+          <path d="M22 12h-4" />
+          <path d="m19.07 4.93-2.83 2.83" />
+        </svg>
+      ),
+    },
+    {
       label: 'Privacy & Terms',
       href: '/admin/collections/pages',
       isActive: pathname.startsWith('/admin/collections/pages'),

@@ -386,6 +386,8 @@ export interface Page {
   createdAt: string;
 }
 /**
+ * Historical Claude AI content intake & generation runs
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "automation-runs".
  */

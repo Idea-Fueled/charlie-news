@@ -6,16 +6,23 @@ export const AutomationRuns: CollectionConfig = {
     singular: 'Automation Run',
     plural: 'Automation Runs',
   },
+  defaultSort: '-startedAt',
   admin: {
     useAsTitle: 'result',
     defaultColumns: [
+      'id',
       'startedAt',
       'result',
       'draftsCreated',
       'storiesChecked',
       'tokensUsed',
       'estimatedCost',
+      'errors',
     ],
+    pagination: {
+      defaultLimit: 25,
+    },
+    description: 'Historical Claude AI content intake & generation runs',
   },
   access: {
     read: () => true,

@@ -303,6 +303,13 @@ export const AdminDashboard = async (props: DashboardProps) => {
                 ● Ready
               </span>
             )}
+            <Link
+              href="/admin/collections/automation-runs"
+              className="charlie-btn charlie-btn--secondary"
+              style={{ padding: '6px 12px', fontSize: '13px' }}
+            >
+              All Runs →
+            </Link>
           </div>
         </div>
 
