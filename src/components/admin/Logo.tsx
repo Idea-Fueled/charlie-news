@@ -8,8 +8,10 @@ export const AdminLogo: React.FC = () => {
     <div
       style={{
         display: 'inline-flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        gap: '9px',
+        justifyContent: 'center',
+        gap: '8px',
         textDecoration: 'none',
         userSelect: 'none',
       }}
@@ -17,12 +19,12 @@ export const AdminLogo: React.FC = () => {
       <div
         style={{
           backgroundColor: '#ffffff',
-          padding: '4px 8px',
-          borderRadius: '6px',
+          padding: '8px 16px',
+          borderRadius: '8px',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.25)',
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.25)',
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -30,10 +32,10 @@ export const AdminLogo: React.FC = () => {
           src={imgSrc}
           alt="Charlie News"
           style={{
-            height: '24px',
+            height: '40px',
             width: 'auto',
-            maxHeight: '26px',
-            maxWidth: '120px',
+            maxHeight: '44px',
+            maxWidth: '190px',
             display: 'block',
             objectFit: 'contain',
           }}
@@ -41,15 +43,15 @@ export const AdminLogo: React.FC = () => {
       </div>
       <span
         style={{
-          fontSize: '0.62rem',
+          fontSize: '0.65rem',
           fontWeight: 700,
-          letterSpacing: '0.08em',
+          letterSpacing: '0.12em',
           textTransform: 'uppercase',
           backgroundColor: '#0f766e',
           color: '#ffffff',
-          padding: '2.5px 6.5px',
+          padding: '2.5px 8.5px',
           borderRadius: '4px',
-          lineHeight: 1,
+          lineHeight: 1.2,
           display: 'inline-block',
         }}
       >
