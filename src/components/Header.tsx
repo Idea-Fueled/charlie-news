@@ -107,7 +107,6 @@ export function Header({ sections = [] }: HeaderProps) {
                 priority
                 className="brand-logo-img"
               />
-              <span className="brand-badge" aria-hidden="true">AU PROPERTY</span>
             </Link>
 
             <nav className="header-nav" aria-label="Main navigation">
