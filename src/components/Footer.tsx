@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import logoImg from '@/assets/Charlie-News-Logo.png'
 
 interface SectionItem {
   id?: number | string
@@ -169,10 +170,8 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
           <div>
             <Link href="/" className="footer-brand-logo" aria-label="Charlie News Homepage">
               <Image
-                src="/Charlie-News-Logo.png"
+                src={logoImg}
                 alt="Charlie News"
-                width={150}
-                height={44}
                 className="footer-logo-img"
               />
             </Link>

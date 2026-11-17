@@ -1,6 +1,9 @@
 import React from 'react'
+import logoImg from '@/assets/Charlie-News-Logo.png'
 
 export const AdminLogo: React.FC = () => {
+  const imgSrc = typeof logoImg === 'string' ? logoImg : (logoImg as { src: string }).src
+
   return (
     <div
       style={{
@@ -24,7 +27,7 @@ export const AdminLogo: React.FC = () => {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/Charlie-News-Logo.png"
+          src={imgSrc}
           alt="Charlie News"
           style={{
             height: '24px',

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import logoImg from '@/assets/Charlie-News-Logo.png'
 
 interface SectionItem {
   id?: number | string
@@ -101,10 +102,8 @@ export function Header({ sections = [] }: HeaderProps) {
           <div className="header-main">
             <Link href="/" className="brand-logo" aria-label="Charlie News Homepage">
               <Image
-                src="/Charlie-News-Logo.png"
+                src={logoImg}
                 alt="Charlie News"
-                width={160}
-                height={47}
                 priority
                 className="brand-logo-img"
               />
