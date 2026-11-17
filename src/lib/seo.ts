@@ -44,12 +44,10 @@ export function getSiteUrl(): string {
 }
 
 /**
- * Established Charlie News default hero image for Open Graph and social previews.
- * Uses the Australian residential architecture photography established across the codebase,
- * sized to standard 1200x630 (1.91:1) Open Graph share dimensions.
+ * Established Charlie News default brand image for Open Graph and social previews.
+ * Uses the official Charlie News brand logo sized to standard 1200x630 (1.91:1) Open Graph share dimensions.
  */
-export const DEFAULT_OG_IMAGE =
-  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&h=630&q=80'
+export const DEFAULT_OG_IMAGE = '/og-image.png'
 
 /**
  * Ensures an image URL is fully qualified, absolute, and publicly fetchable by social crawlers over HTTPS.
@@ -61,13 +59,11 @@ export const DEFAULT_OG_IMAGE =
  * - Missing, empty, or invalid URLs safely fall back to DEFAULT_OG_IMAGE.
  */
 export function toAbsoluteImageUrl(imageInput?: any): string {
-  if (!imageInput) {
-    return DEFAULT_OG_IMAGE
-  }
-
   let rawUrl: string | null = null
 
-  if (typeof imageInput === 'string') {
+  if (!imageInput) {
+    rawUrl = DEFAULT_OG_IMAGE
+  } else if (typeof imageInput === 'string') {
     rawUrl = imageInput.trim()
   } else if (typeof imageInput === 'object') {
     if (typeof imageInput.url === 'string' && imageInput.url.trim()) {
@@ -81,13 +77,8 @@ export function toAbsoluteImageUrl(imageInput?: any): string {
     }
   }
 
-  if (!rawUrl) {
-    return DEFAULT_OG_IMAGE
-  }
-
-  // Reject invalid protocols or client data URIs for social preview metadata
-  if (rawUrl.startsWith('data:') || rawUrl.startsWith('blob:') || rawUrl.startsWith('javascript:')) {
-    return DEFAULT_OG_IMAGE
+  if (!rawUrl || rawUrl.startsWith('data:') || rawUrl.startsWith('blob:') || rawUrl.startsWith('javascript:')) {
+    rawUrl = DEFAULT_OG_IMAGE
   }
 
   let finalUrl = rawUrl

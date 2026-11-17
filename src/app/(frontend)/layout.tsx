@@ -6,7 +6,7 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { getActiveSections } from '@/lib/getNewsData'
 
-import { getSiteUrl, DEFAULT_OG_IMAGE } from '@/lib/seo'
+import { getSiteUrl, toAbsoluteImageUrl, DEFAULT_OG_IMAGE } from '@/lib/seo'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,8 +21,11 @@ const newsreader = Newsreader({
   variable: '--font-serif',
 })
 
+const siteUrl = getSiteUrl()
+const defaultOgUrl = toAbsoluteImageUrl(DEFAULT_OG_IMAGE)
+
 export const metadata: Metadata = {
-  metadataBase: new URL(getSiteUrl()),
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Charlie News | Australian Property News & Market Intelligence',
     template: '%s | Charlie News',
@@ -35,9 +38,9 @@ export const metadata: Metadata = {
     apple: '/Charlie-News-Logo.png',
   },
   alternates: {
-    canonical: getSiteUrl(),
+    canonical: siteUrl,
     types: {
-      'application/rss+xml': `${getSiteUrl()}/rss.xml`,
+      'application/rss+xml': `${siteUrl}/rss.xml`,
     },
   },
   openGraph: {
@@ -46,7 +49,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: DEFAULT_OG_IMAGE,
+        url: defaultOgUrl,
         width: 1200,
         height: 630,
         alt: 'Charlie News | Australian Property News & Market Intelligence',
@@ -55,7 +58,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    images: [DEFAULT_OG_IMAGE],
+    images: [defaultOgUrl],
   },
   robots: {
     index: true,

@@ -63,7 +63,6 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
           width: 1200,
           height: 630,
           alt: imageAlt,
-          type: 'image/jpeg',
         },
       ],
     },

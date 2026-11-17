@@ -19,20 +19,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     'Australian property news covering renovations, housing policy, market trends, and real estate politics across Sydney, Melbourne, Brisbane, and regional Australia.'
 
-  let leadImageUrl = DEFAULT_OG_IMAGE
-  let leadImageAlt = 'Charlie News | Australian Property News & Market Intelligence'
-
-  try {
-    const { articles } = await getAllPublishedArticles()
-    if (articles?.[0]?.image?.url) {
-      leadImageUrl = articles[0].image.url
-      leadImageAlt = articles[0].imageAlt || articles[0].headline || leadImageAlt
-    }
-  } catch {
-    // Keep DEFAULT_OG_IMAGE on fallback
-  }
-
-  const ogImageUrl = toAbsoluteImageUrl(leadImageUrl)
+  // Homepage OG Image: Charlie News Brand Logo card (1200x630)
+  const ogImageUrl = toAbsoluteImageUrl(DEFAULT_OG_IMAGE)
+  const ogImageAlt = 'Charlie News | Australian Property News & Market Intelligence'
 
   return {
     title,
@@ -52,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: leadImageAlt,
+          alt: ogImageAlt,
         },
       ],
     },
