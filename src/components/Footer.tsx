@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface SectionItem {
   id?: number | string
@@ -166,7 +167,15 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
         {/* Footer Navigation & Columns */}
         <div className="footer-columns">
           <div>
-            <h4 className="footer-about-title">Charlie News</h4>
+            <Link href="/" className="footer-brand-logo" aria-label="Charlie News Homepage">
+              <Image
+                src="/Charlie-News-Logo.png"
+                alt="Charlie News"
+                width={150}
+                height={44}
+                className="footer-logo-img"
+              />
+            </Link>
             <p className="footer-about-text">
               Charlie News is your source for Australian property news, from interior and exterior design to the latest market and policy updates.
               <br />

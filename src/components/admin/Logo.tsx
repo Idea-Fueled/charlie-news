@@ -11,18 +11,31 @@ export const AdminLogo: React.FC = () => {
         userSelect: 'none',
       }}
     >
-      <span
+      <div
         style={{
-          fontFamily: "'Newsreader', Georgia, serif",
-          fontSize: '1.45rem',
-          fontWeight: 700,
-          letterSpacing: '-0.035em',
-          color: '#ffffff',
-          lineHeight: 1,
+          backgroundColor: '#ffffff',
+          padding: '4px 8px',
+          borderRadius: '6px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.25)',
         }}
       >
-        Charlie News
-      </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/Charlie-News-Logo.png"
+          alt="Charlie News"
+          style={{
+            height: '24px',
+            width: 'auto',
+            maxHeight: '26px',
+            maxWidth: '120px',
+            display: 'block',
+            objectFit: 'contain',
+          }}
+        />
+      </div>
       <span
         style={{
           fontSize: '0.62rem',

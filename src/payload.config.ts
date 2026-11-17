@@ -25,6 +25,7 @@ export default buildConfig({
     components: {
       graphics: {
         Logo: '@/components/admin/Logo#AdminLogo',
+        Icon: '@/components/admin/Icon#AdminIcon',
       },
       Nav: '@/components/admin/Nav#AdminNav',
       views: {

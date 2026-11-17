@@ -10,16 +10,24 @@ export const AdminIcon: React.FC = () => {
         width: '30px',
         height: '30px',
         borderRadius: '7px',
-        backgroundColor: '#0f766e',
-        color: '#ffffff',
-        fontFamily: "'Newsreader', Georgia, serif",
-        fontSize: '0.95rem',
-        fontWeight: 700,
+        backgroundColor: '#ffffff',
+        padding: '3px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+        overflow: 'hidden',
         userSelect: 'none',
-        lineHeight: 1,
       }}
     >
-      CN
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/Charlie-News-Logo.png"
+        alt="Charlie News Icon"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'contain',
+          display: 'block',
+        }}
+      />
     </div>
   )
 }

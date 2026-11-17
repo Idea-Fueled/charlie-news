@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   },
   description:
     'Independent reporting, daily insights, and updates on Australian property markets, housing policies, and renovation trends.',
+  icons: {
+    icon: '/Charlie-News-Logo.png',
+    shortcut: '/Charlie-News-Logo.png',
+    apple: '/Charlie-News-Logo.png',
+  },
   alternates: {
     canonical: getSiteUrl(),
     types: {

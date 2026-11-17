@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 interface SectionItem {
@@ -99,7 +100,14 @@ export function Header({ sections = [] }: HeaderProps) {
         <div className="site-container">
           <div className="header-main">
             <Link href="/" className="brand-logo" aria-label="Charlie News Homepage">
-              <span className="brand-logo-text">Charlie News</span>
+              <Image
+                src="/Charlie-News-Logo.png"
+                alt="Charlie News"
+                width={160}
+                height={47}
+                priority
+                className="brand-logo-img"
+              />
               <span className="brand-badge" aria-hidden="true">AU PROPERTY</span>
             </Link>
 

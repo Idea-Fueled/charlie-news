@@ -134,6 +134,15 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
+  text-decoration: none;
+}
+
+.brand-logo-img {
+  height: 40px;
+  width: auto;
+  max-width: 190px;
+  object-fit: contain;
+  display: block;
 }
 
 .brand-logo-text {
@@ -1040,6 +1049,20 @@ img {
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
+.footer-brand-logo {
+  display: inline-block;
+  margin-bottom: 14px;
+  text-decoration: none;
+}
+
+.footer-logo-img {
+  height: 38px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  display: block;
+}
+
 .footer-about-title {
   font-family: var(--font-serif);
   font-size: 1.4rem;
@@ -1467,6 +1490,10 @@ select:focus-visible,
   .utility-tz {
     display: none;
   }
+  .brand-logo-img {
+    height: 34px;
+    max-width: 155px;
+  }
   .brand-logo-text {
     font-size: 1.65rem;
   }
@@ -1546,6 +1573,10 @@ select:focus-visible,
   }
   .brand-logo {
     gap: 6px;
+  }
+  .brand-logo-img {
+    height: 34px;
+    max-width: 155px;
   }
   .brand-logo-text {
     font-size: 1.38rem;
