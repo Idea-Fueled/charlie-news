@@ -33,9 +33,12 @@ export const metadata: Metadata = {
   description:
     'Independent reporting, daily insights, and updates on Australian property markets, housing policies, and renovation trends.',
   icons: {
-    icon: '/Charlie-News-Logo.png',
-    shortcut: '/Charlie-News-Logo.png',
-    apple: '/Charlie-News-Logo.png',
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/fav-icon.png', type: 'image/png' },
+    ],
+    shortcut: '/fav-icon.png',
+    apple: '/apple-touch-icon.png',
   },
   alternates: {
     canonical: siteUrl,
@@ -77,6 +80,9 @@ export default async function FrontendLayout({
     <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" href="/fav-icon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link
           rel="alternate"
           type="application/rss+xml"

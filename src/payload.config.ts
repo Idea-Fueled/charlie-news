@@ -19,6 +19,13 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     theme: 'dark',
+    meta: {
+      icons: {
+        icon: '/fav-icon.png',
+        apple: '/apple-touch-icon.png',
+      },
+      titleSuffix: '- Charlie News Admin',
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

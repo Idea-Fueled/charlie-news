@@ -1,8 +1,8 @@
 import React from 'react'
-import logoImg from '@/assets/Charlie-News-Logo.png'
+import favIconImg from '@/assets/fav-icon.png'
 
 export const AdminIcon: React.FC = () => {
-  const imgSrc = typeof logoImg === 'string' ? logoImg : (logoImg as { src: string }).src
+  const imgSrc = typeof favIconImg === 'string' ? favIconImg : (favIconImg as { src: string }).src
 
   return (
     <div
