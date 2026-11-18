@@ -1,5 +1,13 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import {
+  lexicalEditor,
+  FixedToolbarFeature,
+  InlineToolbarFeature,
+  HeadingFeature,
+  LinkFeature,
+  EXPERIMENTAL_TableFeature,
+  UploadFeature,
+} from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -43,7 +51,34 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Sections, Articles, Pages, AutomationRuns],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures,
+      FixedToolbarFeature(),
+      InlineToolbarFeature(),
+      HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
+      LinkFeature({
+        enabledCollections: ['pages', 'articles'],
+      }),
+      EXPERIMENTAL_TableFeature(),
+      UploadFeature({
+        collections: {
+          media: {
+            fields: [
+              {
+                name: 'caption',
+                type: 'text',
+                label: 'Caption',
+                admin: {
+                  description: 'Optional image caption displayed under the photo in the article',
+                },
+              },
+            ],
+          },
+        },
+      }),
+    ],
+  }),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

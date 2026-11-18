@@ -174,7 +174,90 @@ function renderNode(
     )
   }
 
-  // 8. Paragraph (default block)
+  // 8. Tables (Lexical TableFeature)
+  if (node.type === 'table') {
+    return (
+      <div key={key} className="article-table-container">
+        <table className="article-table">
+          <tbody>
+            {node.children?.map((row: any, rIdx: number) =>
+              renderNode(row, `${key}-r${rIdx}`, slugCounts),
+            )}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
+  // 9. Table Row
+  if (node.type === 'tablerow') {
+    return (
+      <tr key={key}>
+        {node.children?.map((cell: any, cIdx: number) =>
+          renderNode(cell, `${key}-c${cIdx}`, slugCounts),
+        )}
+      </tr>
+    )
+  }
+
+  // 10. Table Cell
+  if (node.type === 'tablecell') {
+    const isHeader = Boolean(node.headerState && node.headerState > 0)
+    const CellTag = isHeader ? 'th' : 'td'
+
+    return (
+      <CellTag
+        key={key}
+        colSpan={node.colSpan && node.colSpan > 1 ? node.colSpan : undefined}
+        rowSpan={node.rowSpan && node.rowSpan > 1 ? node.rowSpan : undefined}
+      >
+        {node.children?.map((child: any, idx: number) =>
+          renderNode(child, `${key}-${idx}`, slugCounts),
+        )}
+      </CellTag>
+    )
+  }
+
+  // 11. Inline Images / Uploads (Lexical UploadFeature)
+  if (node.type === 'upload') {
+    const val = node.value
+    let imgUrl = ''
+    let altText = ''
+
+    if (val && typeof val === 'object') {
+      imgUrl = val.url || (val.filename ? `/api/media/file/${val.filename}` : '')
+      altText = val.alt || ''
+    }
+
+    if (!imgUrl) return null
+
+    const caption =
+      node.fields?.caption ||
+      (val && typeof val === 'object' ? val.caption : '')
+
+    return (
+      <figure key={key} className="article-inline-image-wrapper">
+        <img
+          src={imgUrl}
+          alt={altText}
+          className="article-inline-image"
+          loading="lazy"
+        />
+        {caption && (
+          <figcaption className="article-inline-image-caption">
+            {caption}
+          </figcaption>
+        )}
+      </figure>
+    )
+  }
+
+  // 12. Horizontal Rule
+  if (node.type === 'horizontalrule') {
+    return <hr key={key} className="article-divider" />
+  }
+
+  // 13. Paragraph (default block)
   if (node.type === 'paragraph' || !node.type) {
     // If paragraph is completely empty, render empty space or break
     if (!node.children || node.children.length === 0) {

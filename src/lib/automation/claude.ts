@@ -42,6 +42,7 @@ Follow these strict SOW editorial guidelines:
 7. HEADLINE: Must be engaging, accurate, and strictly UNDER 90 characters.
 8. SUMMARY: Must be 1 to 2 sentences and strictly UNDER 200 characters.
 9. SEO DESCRIPTION: Must be strictly UNDER 160 characters.
+10. DATA TABLES: When reporting on specific numerical metrics, rate changes, price comparisons, or timeline dates from the source story, you may include a clean 2-column Markdown table (e.g. | Key Figure | Detail |) within the relevant section to give readers a quick reference summary.
 
 Return your response as a single, valid JSON object with the following structure:
 {
