@@ -1875,3 +1875,67 @@ section.login.template-minimal .template-minimal__wrap {
   }
 }
 
+/* ==========================================================================
+   Full Thumbnail & Media Preview in Admin Upload Drawers
+   - Ensures images (especially wide landscape logos and banners) fit fully
+     without getting clipped or cropped by default 'cover' styling.
+   ========================================================================== */
+.file-details {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  background: #111622 !important;
+
+  header {
+    align-items: center !important;
+    gap: 16px !important;
+  }
+
+  .thumbnail,
+  .file-details__thumbnail {
+    width: 140px !important;
+    min-width: 140px !important;
+    height: 90px !important;
+    background: #0d111a !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    padding: 6px !important;
+
+    img,
+    svg {
+      object-fit: contain !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: auto !important;
+      height: auto !important;
+      display: block !important;
+      margin: auto !important;
+    }
+  }
+
+  .file-details__main-detail {
+    padding: 12px 16px !important;
+  }
+
+  .file-details__edit {
+    background-color: #0f766e !important;
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    transition: background-color 0.2s ease !important;
+
+    &:hover {
+      background-color: #14b8a6 !important;
+    }
+  }
+}
+
+.upload__thumbnail img,
+.thumbnail img {
+  object-fit: contain !important;
+}
+
+

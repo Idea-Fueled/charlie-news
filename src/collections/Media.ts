@@ -14,6 +14,7 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       required: false,
+      validate: () => true as const,
       admin: {
         description: 'Alt text for accessibility (auto-generated from filename if empty)',
       },
@@ -22,6 +23,7 @@ export const Media: CollectionConfig = {
       name: 'caption',
       type: 'text',
       required: false,
+      validate: () => true as const,
       admin: {
         description: 'Optional image caption',
       },
@@ -30,6 +32,8 @@ export const Media: CollectionConfig = {
       name: 'fileData',
       type: 'text',
       required: false,
+      maxLength: 50000000,
+      validate: () => true as const,
       admin: {
         hidden: true,
       },
@@ -39,6 +43,9 @@ export const Media: CollectionConfig = {
     // Disable saving files to local disk so Vercel serverless / read-only filesystem never throws EROFS
     disableLocalStorage: true,
     mimeTypes: ['image/*'],
+    crop: true,
+    focalPoint: true,
+    displayPreview: true,
     adminThumbnail: ({ doc }) => {
       const d = doc as any
       return d?.url || (d?.filename ? `/api/media/file/${d.filename}` : null)
