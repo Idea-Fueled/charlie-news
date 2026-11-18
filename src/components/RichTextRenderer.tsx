@@ -227,6 +227,8 @@ function renderNode(
     if (val && typeof val === 'object') {
       imgUrl = val.url || (val.filename ? `/api/media/file/${val.filename}` : '')
       altText = val.alt || ''
+    } else if (typeof val === 'number' || typeof val === 'string') {
+      imgUrl = `/api/media/file/${val}`
     }
 
     if (!imgUrl) return null

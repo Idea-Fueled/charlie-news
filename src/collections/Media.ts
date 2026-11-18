@@ -51,12 +51,33 @@ export const Media: CollectionConfig = {
       return d?.url || (d?.filename ? `/api/media/file/${d.filename}` : null)
     },
     handlers: [
-      async (_req: any, { doc }: any) => {
-        const fileDoc = doc as any
+      async (req: any, args: any) => {
+        const filename = args?.params?.filename || req?.routeParams?.filename
+        let fileDoc = args?.doc && typeof args.doc === 'object' ? args.doc : null
+
+        if (!fileDoc?.fileData && !fileDoc?.file_data && filename && req?.payload) {
+          try {
+            const cleanName = decodeURIComponent(filename)
+            const isId = !isNaN(Number(cleanName))
+            const result = await req.payload.find({
+              collection: 'media',
+              where: isId
+                ? { id: { equals: Number(cleanName) } }
+                : { filename: { equals: cleanName } },
+              limit: 1,
+              pagination: false,
+            })
+            fileDoc = result?.docs?.[0] || null
+          } catch (e) {
+            req.payload?.logger?.error?.(e)
+          }
+        }
+
         const base64Data = fileDoc?.fileData || fileDoc?.file_data
         if (base64Data) {
           const buffer = Buffer.from(base64Data, 'base64')
           return new Response(buffer, {
+            status: 200,
             headers: {
               'Content-Type': fileDoc.mimeType || fileDoc.mime_type || 'image/jpeg',
               'Content-Length': buffer.length.toString(),
