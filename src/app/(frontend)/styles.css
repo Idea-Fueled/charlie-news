@@ -822,26 +822,27 @@ img {
   display: table;
   font-size: 0.96rem;
   line-height: 1.5;
-  border: 1px solid #0f172a;
-  background-color: #ffffff;
+  border: 1px solid #1e293b;
+  background-color: #ffffff !important;
 }
 
 .article-table th,
 .article-table td {
-  border: 1px solid #0f172a;
+  border: 1px solid #1e293b;
   padding: 10px 14px;
   vertical-align: top;
   text-align: left;
+  background-color: #ffffff !important;
+  color: #0f172a;
 }
 
 .article-table th {
   font-weight: 700;
-  background-color: #f1f5f9;
-  color: #0f172a;
 }
 
+.article-table tr,
 .article-table tr:hover {
-  background-color: #f8fafc;
+  background-color: #ffffff !important;
 }
 
 .article-inline-image-wrapper {
