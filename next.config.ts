@@ -57,16 +57,6 @@ const nextConfig: NextConfig = {
         destination: 'https://propertynewsaustralia.com/:path*',
         permanent: true,
       },
-      {
-        source: '/Market',
-        destination: '/market',
-        permanent: true,
-      },
-      {
-        source: '/Market/:slug*',
-        destination: '/market/:slug*',
-        permanent: true,
-      },
     ]
   },
 }
