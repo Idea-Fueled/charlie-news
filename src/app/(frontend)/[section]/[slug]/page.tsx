@@ -266,7 +266,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 height={675}
                 priority
                 sizes="(max-width: 1024px) 100vw, 840px"
-                style={{ width: '100%', height: 'auto', maxHeight: '560px', objectFit: 'contain' }}
+                style={{ width: '100%', height: 'auto', display: 'block' }}
               />
             </div>
           )}
