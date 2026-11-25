@@ -13,10 +13,25 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: false,
-      validate: () => true as const,
+      required: true,
+      validate: (val: unknown) => {
+        if (!val || typeof val !== 'string' || val.trim().length === 0) {
+          return 'Alt text is required for accessibility and SEO.'
+        }
+        const trimmed = val.trim()
+        if (trimmed.length < 5) {
+          return 'Alt text must be at least 5 characters long and describe the image.'
+        }
+        if (/\.(jpe?g|png|webp|avif|gif|svg)$/i.test(trimmed)) {
+          return 'Alt text cannot be an image filename or include file extensions.'
+        }
+        if (/^(img|dsc|photo|pic|image|a[0-9]+)[-_0-9\s]/i.test(trimmed)) {
+          return 'Please enter a descriptive explanation of the photo rather than a filename code.'
+        }
+        return true
+      },
       admin: {
-        description: 'Alt text for accessibility (auto-generated from filename if empty)',
+        description: 'Meaningful description of the image for screen readers and SEO (cannot be empty or a filename)',
       },
     },
     {
@@ -91,24 +106,13 @@ export const Media: CollectionConfig = {
   },
   hooks: {
     beforeValidate: [
-      ({ data, req }) => {
-        if (data) {
-          if (!data.alt && data.filename) {
-            data.alt = data.filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-          }
-          if (!data.alt && (req as any)?.file?.name) {
-            data.alt = (req as any).file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-          }
-        }
+      ({ data }) => {
         return data
       },
     ],
     beforeChange: [
       async ({ data, req }) => {
         if (data) {
-          if (!data.alt && data.filename) {
-            data.alt = data.filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
-          }
           // Set canonical file URL if not already assigned
           if (data.filename && !data.url) {
             data.url = `/api/media/file/${data.filename}`

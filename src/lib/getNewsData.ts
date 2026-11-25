@@ -57,19 +57,32 @@ function mapDocToCleanArticle(doc: any): CleanArticle {
           description: null,
         }
 
+  const rawImage = doc.image?.url
+    ? doc.image
+    : doc.image_url
+    ? {
+        url: doc.image_url,
+        width: doc.image_width || null,
+        height: doc.image_height || null,
+        source: doc.image_source || null,
+      }
+    : typeof doc.image === 'string'
+    ? { url: doc.image }
+    : doc.image || null
+
   return {
     id: doc.id,
     headline: doc.headline,
     slug: doc.slug,
     summary: doc.summary,
-    seoDescription: doc.seoDescription || null,
+    seoDescription: doc.seoDescription || doc.seo_description || null,
     body: doc.body,
-    publishedAt: doc.publishedAt || null,
-    createdAt: doc.createdAt || null,
-    updatedAt: doc.updatedAt || null,
+    publishedAt: doc.publishedAt || doc.published_at || null,
+    createdAt: doc.createdAt || doc.created_at || null,
+    updatedAt: doc.updatedAt || doc.updated_at || null,
     section: sec,
-    image: doc.image || null,
-    imageAlt: doc.imageAlt || null,
+    image: rawImage,
+    imageAlt: doc.imageAlt || doc.image_alt || null,
     imageCredit: doc.imageCredit || null,
     isDemo: false,
   }
@@ -362,4 +375,67 @@ export async function getArticleBySlug(
   }
   return null
 }
+
+/**
+ * Fetch related articles for the article detail page.
+ * Prioritises articles from the same section; excludes current article; limits to 3.
+ */
+export async function getRelatedArticles(
+  currentArticleId: string | number,
+  sectionId?: number | string | null,
+  limit = 3,
+): Promise<CleanArticle[]> {
+  try {
+    const payloadConfig = await config
+    const payload = await getPayload({ config: payloadConfig })
+
+    const whereClause: any = {
+      and: [
+        { status: { equals: 'Published' } },
+        { id: { not_equals: currentArticleId } },
+      ],
+    }
+
+    if (sectionId) {
+      whereClause.and.push({ section: { equals: sectionId } })
+    }
+
+    const res = await payload.find({
+      collection: 'articles',
+      where: whereClause,
+      sort: '-publishedAt',
+      limit,
+      depth: 1,
+    })
+
+    let related = res.docs ? res.docs.map(mapDocToCleanArticle) : []
+
+    // If fewer than limit articles found in the same section, backfill from other published articles
+    if (related.length < limit) {
+      const existingIds = [currentArticleId, ...related.map((a) => a.id)]
+      const backfillRes = await payload.find({
+        collection: 'articles',
+        where: {
+          and: [
+            { status: { equals: 'Published' } },
+            { id: { not_in: existingIds } },
+          ],
+        },
+        sort: '-publishedAt',
+        limit: limit - related.length,
+        depth: 1,
+      })
+
+      if (backfillRes.docs && backfillRes.docs.length > 0) {
+        related = [...related, ...backfillRes.docs.map(mapDocToCleanArticle)]
+      }
+    }
+
+    return related
+  } catch (err) {
+    console.error('Error fetching related articles from Payload:', err)
+    return []
+  }
+}
+
 

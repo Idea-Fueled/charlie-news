@@ -209,8 +209,27 @@ export const Articles: CollectionConfig = {
     {
       name: 'imageAlt',
       type: 'text',
+      validate: (val: unknown, { siblingData }: any) => {
+        // Enforce meaningful alt text when an article is being published
+        if (siblingData?.status === 'Published') {
+          if (!val || typeof val !== 'string' || val.trim().length === 0) {
+            return 'Alt text is required when publishing an article.'
+          }
+          const trimmed = val.trim()
+          if (trimmed.length < 5) {
+            return 'Alt text must be at least 5 characters long.'
+          }
+          if (/\.(jpe?g|png|webp|avif|gif|svg)$/i.test(trimmed)) {
+            return 'Alt text cannot be an image filename or include file extensions.'
+          }
+          if (/^(img|dsc|photo|pic|image|a[0-9]+)[-_0-9\s]/i.test(trimmed)) {
+            return 'Please enter a descriptive explanation of the image rather than a filename code.'
+          }
+        }
+        return true
+      },
       admin: {
-        description: 'Alt text for the photo for accessibility',
+        description: 'Alt text for the photo for accessibility (required when publishing)',
       },
     },
     {

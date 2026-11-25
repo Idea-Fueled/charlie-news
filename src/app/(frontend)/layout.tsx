@@ -27,8 +27,8 @@ const defaultOgUrl = toAbsoluteImageUrl(DEFAULT_OG_IMAGE)
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Charlie News | Australian Property News & Market Intelligence',
-    template: '%s | Charlie News',
+    default: 'Property News Australia | Australian Property News & Market Intelligence',
+    template: '%s | Property News Australia',
   },
   description:
     'Independent reporting, daily insights, and updates on Australian property markets, housing policies, and renovation trends.',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    siteName: 'Charlie News',
+    siteName: 'Property News Australia',
     locale: 'en_AU',
     type: 'website',
     images: [
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
         url: defaultOgUrl,
         width: 1200,
         height: 630,
-        alt: 'Charlie News | Australian Property News & Market Intelligence',
+        alt: 'Property News Australia | Australian Property News & Market Intelligence',
       },
     ],
   },
@@ -78,18 +78,6 @@ export default async function FrontendLayout({
 
   return (
     <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" href="/fav-icon.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title="Charlie News RSS Feed"
-          href={`${getSiteUrl()}/rss.xml`}
-        />
-      </head>
       <body>
         <a href="#main-content" className="skip-to-content">
           Skip to main content

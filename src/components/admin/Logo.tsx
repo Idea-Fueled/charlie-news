@@ -30,7 +30,7 @@ export const AdminLogo: React.FC = () => {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={imgSrc}
-          alt="Charlie News"
+          alt="Property News Australia"
           style={{
             height: '40px',
             width: 'auto',

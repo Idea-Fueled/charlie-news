@@ -44,6 +44,31 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(dirname),
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'charlie-news-one.vercel.app',
+          },
+        ],
+        destination: 'https://propertynewsaustralia.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/Market',
+        destination: '/market',
+        permanent: true,
+      },
+      {
+        source: '/Market/:slug*',
+        destination: '/market/:slug*',
+        permanent: true,
+      },
+    ]
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })

@@ -259,7 +259,7 @@ export async function subscribeToNewsletter(
         attributes: {
           email: normalizedEmail,
           properties: {
-            $source: 'Charlie News Website Footer',
+            $source: 'Property News Australia Website Footer',
           },
         },
       },
@@ -420,7 +420,7 @@ export async function subscribeToNewsletter(
       data: {
         type: 'profile-subscription-bulk-create-job',
         attributes: {
-          custom_source: 'Charlie News Website Footer',
+          custom_source: 'Property News Australia Website Footer',
           profiles: {
             data: [
               {

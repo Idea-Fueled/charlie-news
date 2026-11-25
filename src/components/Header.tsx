@@ -67,32 +67,6 @@ export function Header({ sections = [] }: HeaderProps) {
               {todayFormatted} <span className="utility-tz">(Sydney Time)</span>
             </span>
           </div>
-          <div className="utility-right">
-            <Link
-              href="/admin"
-              className="utility-admin-link"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Admin Login (opens in new tab)"
-            >
-              <span>Admin Login</span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M15 3h6v6"/>
-                <path d="M10 14 21 3"/>
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              </svg>
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -100,10 +74,10 @@ export function Header({ sections = [] }: HeaderProps) {
       <header className="site-header">
         <div className="site-container">
           <div className="header-main">
-            <Link href="/" className="brand-logo" aria-label="Charlie News Homepage">
+            <Link href="/" className="brand-logo" aria-label="Property News Australia Homepage">
               <Image
                 src={logoImg}
-                alt="Charlie News"
+                alt="Property News Australia"
                 priority
                 className="brand-logo-img"
               />
@@ -192,16 +166,6 @@ export function Header({ sections = [] }: HeaderProps) {
                   </Link>
                 )
               })}
-              <Link
-                href="/admin"
-                className="nav-link"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Admin Panel (opens in new tab)"
-              >
-                Admin Panel <span aria-hidden="true">↗</span>
-              </Link>
             </nav>
           )}
         </div>

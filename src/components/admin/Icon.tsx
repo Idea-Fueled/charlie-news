@@ -23,7 +23,7 @@ export const AdminIcon: React.FC = () => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imgSrc}
-        alt="Charlie News Icon"
+        alt="Property News Australia Icon"
         style={{
           width: '100%',
           height: '100%',

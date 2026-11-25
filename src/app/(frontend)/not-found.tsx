@@ -3,8 +3,8 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Page Not Found | Charlie News',
-  description: 'The property article, section, or page you were looking for does not exist on Charlie News.',
+  title: 'Page Not Found',
+  description: 'The property article, section, or page you were looking for does not exist on Property News Australia.',
   robots: {
     index: false,
     follow: false,

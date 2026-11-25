@@ -152,7 +152,7 @@ export const AdminDashboard = async (props: DashboardProps) => {
       <div className="charlie-dash-header">
         <div className="charlie-dash-header-title">
           <div className="charlie-dash-badge">EDITORIAL DASHBOARD</div>
-          <h1>Charlie News Desk</h1>
+          <h1>Property News Australia Desk</h1>
           <p className="charlie-dash-subtitle">
             Sydney, Australia • {sydneyDateFormatted} • Logged in as Single Administrator
           </p>

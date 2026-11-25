@@ -168,15 +168,15 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
         {/* Footer Navigation & Columns */}
         <div className="footer-columns">
           <div>
-            <Link href="/" className="footer-brand-logo" aria-label="Charlie News Homepage">
+            <Link href="/" className="footer-brand-logo" aria-label="Property News Australia Homepage">
               <Image
                 src={logoImg}
-                alt="Charlie News"
+                alt="Property News Australia"
                 className="footer-logo-img"
               />
             </Link>
             <p className="footer-about-text">
-              Charlie News is your source for Australian property news, from interior and exterior design to the latest market and policy updates.
+              Property News Australia is your source for Australian property news, from interior and exterior design to the latest market and policy updates.
               <br />
               Stories are drafted with the help of AI and checked by our team before they go live.
               <br />
@@ -208,7 +208,7 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
                   <Link href="/privacy-terms">Privacy & Terms</Link>
                 </li>
                 <li>
-                  <a href="mailto:info@corbygroup.com">info@corbygroup.com</a>
+                  <a href="mailto:contact@corbygroup.com">contact@corbygroup.com</a>
                 </li>
               </ul>
             </nav>
@@ -217,7 +217,7 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
 
         {/* Bottom copyright line */}
         <div className="footer-bottom-bar">
-          <p>© {currentYear} Charlie News. All rights reserved.</p>
+          <p>© 2026 Property News Australia. All rights reserved.</p>
           <p>Reporting on Australian Property & Housing Policy</p>
         </div>
       </div>

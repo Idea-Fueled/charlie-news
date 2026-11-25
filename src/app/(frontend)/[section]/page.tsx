@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: SectionPageProps): Promise<Me
 
   if (!currentSection) {
     return {
-      title: 'Section Not Found | Charlie News',
+      title: 'Section Not Found',
       robots: {
         index: false,
         follow: false,
@@ -39,8 +39,9 @@ export async function generateMetadata({ params }: SectionPageProps): Promise<Me
   const canonicalUrl = `${siteUrl}/${currentSection.slug}`
   const description =
     currentSection.description ||
-    `Latest ${currentSection.name} property news, policies, and market updates from Charlie News.`
-  const title = `${currentSection.name} News | Charlie News`
+    `Latest ${currentSection.name} property news, policies, and market updates from Property News Australia.`
+  const title = `${currentSection.name} News`
+  const ogTitle = `${currentSection.name} News | Property News Australia`
 
   let sectionImageUrl = DEFAULT_OG_IMAGE
   try {
@@ -61,10 +62,10 @@ export async function generateMetadata({ params }: SectionPageProps): Promise<Me
       canonical: canonicalUrl,
     },
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       url: canonicalUrl,
-      siteName: 'Charlie News',
+      siteName: 'Property News Australia',
       locale: 'en_AU',
       type: 'website',
       images: [
@@ -72,13 +73,13 @@ export async function generateMetadata({ params }: SectionPageProps): Promise<Me
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: ogTitle,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: ogTitle,
       description,
       images: [ogImageUrl],
     },

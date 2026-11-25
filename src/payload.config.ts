@@ -32,7 +32,7 @@ export default buildConfig({
         icon: '/fav-icon.png',
         apple: '/apple-touch-icon.png',
       },
-      titleSuffix: '- Charlie News Admin',
+      titleSuffix: '- Property News Australia Admin',
     },
     importMap: {
       baseDir: path.resolve(dirname),

@@ -91,7 +91,7 @@ export function ArticleTOCAndShare({
     twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(articleTitle)}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`,
     email: `mailto:?subject=${encodeURIComponent(articleTitle)}&body=${encodeURIComponent(
-      `Read this article on Charlie News:\n\n${articleTitle}\n${currentUrl}`,
+      `Read this article on Property News Australia:\n\n${articleTitle}\n${currentUrl}`,
     )}`,
   }
 

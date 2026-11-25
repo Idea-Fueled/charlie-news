@@ -1,5 +1,5 @@
 /**
- * Centralized SEO Utilities for Charlie News
+ * Centralized SEO Utilities for Property News Australia
  */
 
 /**
@@ -26,6 +26,11 @@ export function getSiteUrl(): string {
     return clean
   }
 
+  // Fallback to official Property News Australia domain in production
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://propertynewsaustralia.com'
+  }
+
   // Vercel production and deployment URLs
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.trim().replace(/\/$/, '')}`
@@ -35,17 +40,12 @@ export function getSiteUrl(): string {
     return `https://${process.env.VERCEL_URL.trim().replace(/\/$/, '')}`
   }
 
-  // Fallback to official Charlie News domain in production
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://charlienews.com.au'
-  }
-
   return (serverUrl || 'http://localhost:3005').trim().replace(/\/$/, '')
 }
 
 /**
- * Established Charlie News default brand image for Open Graph and social previews.
- * Uses the official Charlie News brand logo sized to standard 1200x630 (1.91:1) Open Graph share dimensions.
+ * Established Property News Australia default brand image for Open Graph and social previews.
+ * Uses the official brand image sized to standard 1200x630 (1.91:1) Open Graph share dimensions.
  */
 export const DEFAULT_OG_IMAGE = '/og-image.png'
 

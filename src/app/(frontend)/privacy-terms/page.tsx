@@ -15,20 +15,21 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteUrl = getSiteUrl()
   const canonicalUrl = `${siteUrl}/privacy-terms`
   const description =
-    'Privacy policy and terms of use for Charlie News Australian property publication.'
+    'Privacy policy and terms of use for Property News Australia property publication.'
   const ogImageUrl = toAbsoluteImageUrl(DEFAULT_OG_IMAGE)
+  const ogTitle = `${title} | Property News Australia`
 
   return {
-    title: `${title} | Charlie News`,
+    title,
     description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${title} | Charlie News`,
+      title: ogTitle,
       description,
       url: canonicalUrl,
-      siteName: 'Charlie News',
+      siteName: 'Property News Australia',
       locale: 'en_AU',
       type: 'website',
       images: [
@@ -36,13 +37,13 @@ export async function generateMetadata(): Promise<Metadata> {
           url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${title} | Charlie News`,
+          alt: ogTitle,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | Charlie News`,
+      title: ogTitle,
       description,
       images: [ogImageUrl],
     },

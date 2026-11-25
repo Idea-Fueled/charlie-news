@@ -10,21 +10,24 @@ import {
 import type { Metadata } from 'next'
 
 import { getSiteUrl, toAbsoluteImageUrl, DEFAULT_OG_IMAGE } from '@/lib/seo'
+import { formatArticleDate } from '@/lib/dateFormat'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteUrl = getSiteUrl()
-  const title = 'Charlie News | Australian Property News & Market Intelligence'
+  const title = 'Property News Australia | Australian Property News & Market Intelligence'
   const description =
     'Australian property news covering renovations, housing policy, market trends, and real estate politics across Sydney, Melbourne, Brisbane, and regional Australia.'
 
-  // Homepage OG Image: Charlie News Brand Logo card (1200x630)
+  // Homepage OG Image: Brand Logo card (1200x630)
   const ogImageUrl = toAbsoluteImageUrl(DEFAULT_OG_IMAGE)
-  const ogImageAlt = 'Charlie News | Australian Property News & Market Intelligence'
+  const ogImageAlt = 'Property News Australia | Australian Property News & Market Intelligence'
 
   return {
-    title,
+    title: {
+      absolute: title,
+    },
     description,
     alternates: {
       canonical: siteUrl,
@@ -33,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: siteUrl,
-      siteName: 'Charlie News',
+      siteName: 'Property News Australia',
       locale: 'en_AU',
       type: 'website',
       images: [
@@ -78,14 +81,7 @@ export default async function HomePage() {
 
   // Format Top Story date
   const topStoryDate = topStory?.publishedAt || topStory?.createdAt
-  const formattedTopDate = topStoryDate
-    ? new Intl.DateTimeFormat('en-AU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'Australia/Sydney',
-      }).format(new Date(topStoryDate))
-    : 'Latest Update'
+  const formattedTopDate = formatArticleDate(topStoryDate, { fallback: 'Latest Update' })
 
   const topStorySectionSlug = topStory?.section?.slug || 'property'
   const topStorySectionName = topStory?.section?.name || 'Property'

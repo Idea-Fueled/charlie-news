@@ -3,12 +3,13 @@ import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getArticleBySlugOrRedirect } from '@/lib/getNewsData'
+import { getArticleBySlugOrRedirect, getRelatedArticles } from '@/lib/getNewsData'
 import { RichTextRenderer } from '@/components/RichTextRenderer'
 import { ArticleTOCAndShare } from '@/components/ArticleTOCAndShare'
+import { ArticleCard } from '@/components/ArticleCard'
 import { extractHeadingsFromLexical } from '@/lib/toc'
-
 import { getSiteUrl, toAbsoluteImageUrl } from '@/lib/seo'
+import { formatArticleDate } from '@/lib/dateFormat'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
   if (res.type !== 'found' || !res.article) {
     return {
-      title: 'Article Not Found | Charlie News',
+      title: 'Article Not Found',
       robots: {
         index: false,
         follow: false,
@@ -35,22 +36,24 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
   const { article } = res
   const siteUrl = getSiteUrl()
-  const canonicalUrl = `${siteUrl}/${sectionSlug}/${article.slug}`
+  const resolvedSection = (article.section?.slug || sectionSlug).toLowerCase()
+  const canonicalUrl = `${siteUrl}/${resolvedSection}/${article.slug}`
   const description = article.seoDescription || article.summary || article.headline
   const articleImageUrl = toAbsoluteImageUrl(article.image?.url || article.image)
   const imageAlt = article.imageAlt || article.headline
+  const ogTitle = `${article.headline} | Property News Australia`
 
   return {
-    title: `${article.headline} | Charlie News`,
+    title: article.headline,
     description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: article.headline,
+      title: ogTitle,
       description,
       url: canonicalUrl,
-      siteName: 'Charlie News',
+      siteName: 'Property News Australia',
       locale: 'en_AU',
       type: 'article',
       publishedTime: article.publishedAt || article.createdAt || undefined,
@@ -68,7 +71,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     },
     twitter: {
       card: 'summary_large_image',
-      title: article.headline,
+      title: ogTitle,
       description,
       images: [
         {
@@ -95,16 +98,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const article = res.article
 
-  // Format Australian date (Sydney time - SOW 4.4)
+  // Format Australian date (Sydney time)
   const dateStr = article.publishedAt || article.createdAt
-  const formattedDate = dateStr
-    ? new Intl.DateTimeFormat('en-AU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        timeZone: 'Australia/Sydney',
-      }).format(new Date(dateStr))
-    : 'Recent'
+  const formattedDate = formatArticleDate(dateStr, { fallback: 'Recent' })
 
   const sectionName = article.section?.name || 'Property'
 
@@ -128,7 +124,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </a>{' '}
           on{' '}
           <a
-            href="https://unsplash.com?utm_source=charlie_news&utm_medium=referral"
+            href="https://unsplash.com?utm_source=property_news_australia&utm_medium=referral"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -157,7 +153,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const tocItems = extractHeadingsFromLexical(article.body)
   const siteUrl = getSiteUrl()
-  const canonicalUrl = `${siteUrl}/${sectionSlug}/${article.slug}`
+  const resolvedSectionSlug = (article.section?.slug || sectionSlug).toLowerCase()
+  const canonicalUrl = `${siteUrl}/${resolvedSectionSlug}/${article.slug}`
+  const relatedArticles = await getRelatedArticles(article.id, article.section?.id, 3)
 
   const featuredImageUrl =
     article.image?.url || (typeof article.image === 'string' ? article.image : null)
@@ -182,7 +180,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       : {}),
     publisher: {
       '@type': 'NewsMediaOrganization',
-      name: 'Charlie News',
+      name: 'Property News Australia',
       url: siteUrl,
       logo: {
         '@type': 'ImageObject',
@@ -282,7 +280,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             fallbackText={article.bodyText}
           />
 
-          {/* Claude AI Disclosure Note (SOW 4.4 & 6.3) */}
+          {/* AI Disclosure Note */}
           <div className="ai-disclosure-badge">
             <div className="ai-disclosure-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -291,21 +289,43 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </svg>
             </div>
             <div>
-              <div className="ai-disclosure-title">Charlie News Editorial Transparency</div>
+              <div className="ai-disclosure-title">Property News Australia Editorial Transparency</div>
               <div className="ai-disclosure-desc">
-                This article was researched and drafted with the assistance of Claude AI, then reviewed, edited, and approved by Charlie News editors before publication.
+                This article was researched and drafted with the assistance of Claude AI, then reviewed, edited, and approved by Property News Australia editors before publication.
               </div>
             </div>
           </div>
 
           {/* Back to section navigation */}
           <div className="article-back-nav">
-            <Link href={`/${sectionSlug}`} className="page-btn" aria-label={`Back to ${sectionName} News`}>
+            <Link href={`/${resolvedSectionSlug}`} className="page-btn" aria-label={`Back to ${sectionName} News`}>
               <span aria-hidden="true">←</span> Back to {sectionName} News
             </Link>
           </div>
         </div>
       </div>
+
+      {/* RELATED STORIES SECTION (Item 8) */}
+      {relatedArticles.length > 0 && (
+        <section className="section-block related-stories-section" aria-label="Related Stories" style={{ marginTop: '56px', paddingTop: '40px', borderTop: '2px solid var(--color-border)' }}>
+          <div className="section-header-bar">
+            <h2 className="section-heading">Related Stories</h2>
+            <Link href={`/${resolvedSectionSlug}`} className="section-see-all">
+              More in {sectionName} →
+            </Link>
+          </div>
+          <div className="cards-grid">
+            {relatedArticles.map((relArt) => (
+              <ArticleCard
+                key={relArt.id}
+                article={relArt}
+                sectionSlug={relArt.section?.slug || resolvedSectionSlug}
+                sectionName={relArt.section?.name || sectionName}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </article>
     </>
   )

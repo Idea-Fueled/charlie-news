@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { formatArticleDate } from '@/lib/dateFormat'
 
 export interface ArticleItem {
   id?: number | string
@@ -45,13 +46,7 @@ export function ArticleCard({ article, sectionSlug, sectionName }: ArticleCardPr
 
   // Format date
   const dateStr = article.publishedAt || article.createdAt
-  const formattedDate = dateStr
-    ? new Intl.DateTimeFormat('en-AU', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }).format(new Date(dateStr))
-    : 'Recent'
+  const formattedDate = formatArticleDate(dateStr, { fallback: 'Recent' })
 
   const imageUrl =
     article.image?.url ||

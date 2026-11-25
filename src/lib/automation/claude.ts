@@ -30,7 +30,7 @@ export interface SectionMetadata {
   claudeTopicGuide?: string | null
 }
 
-const SYSTEM_PROMPT = `You are a senior Australian property journalist writing for Charlie News (charlienews.com.au), an independent Australian property and housing publication.
+const SYSTEM_PROMPT = `You are a senior Australian property journalist writing for Property News Australia (propertynewsaustralia.com), an independent Australian property and housing publication.
 
 Follow these strict SOW editorial guidelines:
 1. FACTUAL ACCURACY: Write an original news article based ONLY on the source facts provided. Never invent quotes, people, numbers, percentages, dates, or council policies.
@@ -85,7 +85,7 @@ function buildUserPrompt(story: RawRssStory, sections: SectionMetadata[]): strin
     ? `\nRecommended Target Section: ${story.sectionHint}`
     : ''
 
-  return `Please write an original Charlie News article based on this source story:
+  return `Please write an original Property News Australia article based on this source story:
 
 SOURCE INFORMATION:
 Source Name: ${story.sourceName}
