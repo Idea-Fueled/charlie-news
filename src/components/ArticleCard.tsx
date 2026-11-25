@@ -75,7 +75,7 @@ export function ArticleCard({ article, sectionSlug, sectionName }: ArticleCardPr
           alt={article.imageAlt || article.headline}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 380px"
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'contain' }}
         />
       </Link>
       <div className="card-body">

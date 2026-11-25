@@ -128,7 +128,7 @@ export default async function HomePage() {
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 55vw"
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: 'contain' }}
               />
             </Link>
 
