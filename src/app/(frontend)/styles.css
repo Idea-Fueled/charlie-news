@@ -286,21 +286,20 @@ img {
   border-radius: 9999px;
   margin-bottom: 14px;
   width: fit-content;
-}
-
-.badge-tag.renovation {
   background: var(--color-renovation-bg);
   color: var(--color-renovation);
+  transition: opacity 0.2s ease;
 }
 
-.badge-tag.politics {
-  background: var(--color-politics-bg);
-  color: var(--color-politics);
+.badge-tag:hover {
+  opacity: 0.85;
 }
 
+.badge-tag.renovation,
+.badge-tag.politics,
 .badge-tag.general {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--color-renovation-bg);
+  color: var(--color-renovation);
 }
 
 .hero-title {
