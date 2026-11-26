@@ -93,19 +93,6 @@ export default async function HomePage() {
 
   return (
     <div className="site-container">
-      {/* Demo notice if no database articles yet */}
-      {isDemo && (
-        <div className="demo-banner">
-          <span>
-            ℹ️ <strong>Preview Mode:</strong> Showing sample Australian property stories. Approve drafts in the{' '}
-            <Link href="/admin" style={{ textDecoration: 'underline', fontWeight: 600 }}>
-              Admin Panel
-            </Link>{' '}
-            to display live articles here.
-          </span>
-        </div>
-      )}
-
       {/* TOP STORY (Hero Lead Article) - SOW 4.2 */}
       {topStory && (
         <section className="hero-section" aria-label="Lead story">

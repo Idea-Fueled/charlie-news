@@ -110,15 +110,6 @@ export default async function SectionPage({
 
   return (
     <div className="site-container">
-      {/* Demo notice if no database articles yet */}
-      {isDemo && (
-        <div className="demo-banner">
-          <span>
-            ℹ️ <strong>Preview Mode:</strong> Displaying sample stories for {currentSection.name}.
-          </span>
-        </div>
-      )}
-
       {/* Section Header Banner - SOW 4.3 */}
       <div className="section-page-banner">
         <h1 className="section-page-title">{currentSection.name} News</h1>
