@@ -158,9 +158,9 @@ export interface User {
 export interface Media {
   id: number;
   /**
-   * Alt text for accessibility (auto-generated from filename if empty)
+   * Meaningful description of the image for screen readers and SEO (cannot be empty or a filename)
    */
-  alt?: string | null;
+  alt: string;
   /**
    * Optional image caption
    */
@@ -287,7 +287,7 @@ export interface Article {
     source?: ('Pexels' | 'Unsplash' | 'Upload') | null;
   };
   /**
-   * Alt text for the photo for accessibility
+   * Alt text for the photo for accessibility (required when publishing)
    */
   imageAlt?: string | null;
   imageCredit?: {
