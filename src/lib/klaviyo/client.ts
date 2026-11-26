@@ -314,6 +314,40 @@ export async function subscribeToNewsletter(
           profileId = lookupJson?.data?.[0]?.id || null
         }
       }
+
+      // Update first_name and last_name on existing profile if provided
+      if (profileId && (options.firstName?.trim() || options.lastName?.trim())) {
+        try {
+          const patchAttributes: Record<string, any> = {}
+          if (options.firstName?.trim()) {
+            patchAttributes.first_name = options.firstName.trim()
+          }
+          if (options.lastName?.trim()) {
+            patchAttributes.last_name = options.lastName.trim()
+          }
+
+          const patchController = new AbortController()
+          const patchTimeout = setTimeout(() => patchController.abort(), 8000)
+
+          await fetch(`${KLAVIYO_BASE_URL}/profiles/${profileId}/`, {
+            method: 'PATCH',
+            headers: commonHeaders,
+            body: JSON.stringify({
+              data: {
+                type: 'profile',
+                id: profileId,
+                attributes: patchAttributes,
+              },
+            }),
+            signal: patchController.signal,
+          })
+          clearTimeout(patchTimeout)
+        } catch (patchErr: any) {
+          console.warn(
+            `[Klaviyo Profile Update Warning] Could not update profile names: ${patchErr?.message || patchErr}`,
+          )
+        }
+      }
     } else {
       // Profile creation failed with an unexpected error status
       const firstError = profileJson?.errors?.[0]

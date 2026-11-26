@@ -183,6 +183,68 @@ describe('Klaviyo Newsletter Client (Option B)', () => {
       expect(listBody.data[0].id).toBe('PROFILE_EXISTING_999')
     })
 
+    it('updates first name and last name on existing duplicate profiles (409 Conflict)', async () => {
+      const fetchMock = vi.fn()
+
+      // Step 1: POST /api/profiles/ -> 409 Conflict with duplicate_profile_id
+      fetchMock.mockResolvedValueOnce({
+        status: 409,
+        ok: false,
+        json: async () => ({
+          errors: [
+            {
+              code: 'duplicate_profile',
+              meta: {
+                duplicate_profile_id: 'PROFILE_EXISTING_999',
+              },
+            },
+          ],
+        }),
+      })
+
+      // Step 1b: PATCH /api/profiles/PROFILE_EXISTING_999/ -> 200 OK
+      fetchMock.mockResolvedValueOnce({
+        status: 200,
+        ok: true,
+        json: async () => ({
+          data: { id: 'PROFILE_EXISTING_999', type: 'profile' },
+        }),
+      })
+
+      // Step 2: POST /api/lists/TEST_LIST_ID/relationships/profiles/ -> 204 No Content
+      fetchMock.mockResolvedValueOnce({
+        status: 204,
+        ok: true,
+        text: async () => '',
+      })
+
+      // Step 3: POST /api/profile-subscription-bulk-create-jobs/ -> 202 Accepted
+      fetchMock.mockResolvedValueOnce({
+        status: 202,
+        ok: true,
+        text: async () => '',
+      })
+
+      global.fetch = fetchMock
+
+      const result = await subscribeToNewsletter('existing@example.com', {
+        firstName: 'Jane',
+        lastName: 'Doe',
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.profileId).toBe('PROFILE_EXISTING_999')
+      expect(result.addedToList).toBe(true)
+      expect(result.consentAccepted).toBe(true)
+
+      // Verify PATCH was called on the duplicate profile ID with name attributes
+      expect(fetchMock.mock.calls[1][0]).toBe('https://a.klaviyo.com/api/profiles/PROFILE_EXISTING_999/')
+      expect(fetchMock.mock.calls[1][1].method).toBe('PATCH')
+      const patchBody = JSON.parse(fetchMock.mock.calls[1][1].body)
+      expect(patchBody.data.attributes.first_name).toBe('Jane')
+      expect(patchBody.data.attributes.last_name).toBe('Doe')
+    })
+
     it('truthfully handles partial failure when list attachment succeeds but consent recording fails', async () => {
       const fetchMock = vi.fn()
 
