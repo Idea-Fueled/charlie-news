@@ -4,6 +4,7 @@ import { Inter, Newsreader } from 'next/font/google'
 import './styles.css'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { NavigationProgress } from '@/components/NavigationProgress'
 import { getActiveSections } from '@/lib/getNewsData'
 
 import { getSiteUrl, toAbsoluteImageUrl, DEFAULT_OG_IMAGE } from '@/lib/seo'
@@ -79,6 +80,7 @@ export default async function FrontendLayout({
   return (
     <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
       <body>
+        <NavigationProgress />
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>

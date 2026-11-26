@@ -1689,3 +1689,104 @@ select:focus-visible,
     min-height: 38px;
   }
 }
+
+/* =========================================================================
+   Navigation Progress Bar, Spinner & Skeleton Loading States
+   ========================================================================= */
+
+.nav-progress-spinner {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 2.5px solid rgba(2, 132, 199, 0.2);
+  border-top-color: #0284c7;
+  border-left-color: #38bdf8;
+  border-radius: 50%;
+  animation: navProgressSpin 600ms linear infinite;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+}
+
+@keyframes navProgressSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Tactile Click Feedback on Cards & Buttons */
+.news-card {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.news-card:active,
+.hero-card:active,
+.related-story-card:active {
+  transform: scale(0.992);
+  transition: transform 60ms ease;
+}
+
+.news-card a:active,
+.hero-card a:active {
+  opacity: 0.85;
+}
+
+/* Skeleton Loading Shimmer */
+.skeleton-line {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite ease-in-out;
+  border-radius: var(--radius-sm);
+}
+
+.article-skeleton-loading {
+  padding-top: 24px;
+  padding-bottom: 60px;
+}
+
+.skeleton-badge {
+  width: 130px;
+  height: 24px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-headline {
+  width: 90%;
+  height: 42px;
+  margin-bottom: 12px;
+}
+
+.skeleton-headline-sub {
+  width: 65%;
+  height: 36px;
+  margin-bottom: 20px;
+}
+
+.skeleton-meta {
+  width: 240px;
+  height: 18px;
+  margin-bottom: 28px;
+}
+
+.skeleton-image-wrapper {
+  width: 100%;
+  height: 440px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite ease-in-out;
+  margin-bottom: 36px;
+}
+
+.skeleton-text {
+  width: 100%;
+  height: 18px;
+  margin-bottom: 14px;
+}
+
+.skeleton-text-short {
+  width: 70%;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
