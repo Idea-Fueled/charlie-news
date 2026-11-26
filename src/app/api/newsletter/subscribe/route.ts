@@ -20,6 +20,8 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
   try {
     let email = ''
+    let firstName = ''
+    let lastName = ''
     let honeypot = ''
 
     // Parse incoming request body (support JSON and FormData)
@@ -27,10 +29,14 @@ export async function POST(req: NextRequest) {
     if (contentType.includes('application/json')) {
       const body = await req.json().catch(() => ({}))
       email = String(body?.email || '').trim()
+      firstName = String(body?.firstName || body?.first_name || '').trim()
+      lastName = String(body?.lastName || body?.last_name || '').trim()
       honeypot = String(body?.trap || body?.trap_field || body?.b_trap || '').trim()
     } else {
       const formData = await req.formData().catch(() => new FormData())
       email = String(formData.get('email') || '').trim()
+      firstName = String(formData.get('firstName') || formData.get('first_name') || '').trim()
+      lastName = String(formData.get('lastName') || formData.get('last_name') || '').trim()
       honeypot = String(
         formData.get('trap') ||
           formData.get('trap_field') ||
@@ -61,7 +67,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Subscribe to Klaviyo list using Option B flow
-    const result = await subscribeToNewsletter(email)
+    const result = await subscribeToNewsletter(email, {
+      firstName,
+      lastName,
+    })
 
     if (result.success) {
       return NextResponse.json({

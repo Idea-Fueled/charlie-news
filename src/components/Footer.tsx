@@ -12,6 +12,8 @@ interface SectionItem {
 }
 
 export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
@@ -30,6 +32,8 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
       // Silently return success to fool bots without making external calls
       setStatus('success')
       setMessage('Thanks for signing up.')
+      setFirstName('')
+      setLastName('')
       setEmail('')
       return
     }
@@ -55,6 +59,8 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           email: trimmed,
           b_trap: honeypot,
         }),
@@ -65,6 +71,8 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
       if (res.ok && data?.success) {
         setStatus('success')
         setMessage(data.message || 'Thanks for signing up.')
+        setFirstName('')
+        setLastName('')
         setEmail('')
       } else if (res.status === 400) {
         setStatus('error')
@@ -105,6 +113,43 @@ export function Footer({ sections = [] }: { sections?: SectionItem[] }) {
               autoComplete="off"
               aria-hidden="true"
             />
+
+            {/* Name Fields (First Name & Last Name) */}
+            <div className="newsletter-names-group">
+              <label htmlFor="newsletter-firstname" className="sr-only">
+                First name
+              </label>
+              <input
+                id="newsletter-firstname"
+                type="text"
+                placeholder="First name"
+                value={firstName}
+                onChange={(e) => {
+                  setFirstName(e.target.value)
+                  if (status !== 'idle' && status !== 'loading') setStatus('idle')
+                }}
+                className="newsletter-input"
+                autoComplete="given-name"
+                disabled={status === 'loading'}
+              />
+
+              <label htmlFor="newsletter-lastname" className="sr-only">
+                Last name
+              </label>
+              <input
+                id="newsletter-lastname"
+                type="text"
+                placeholder="Last name"
+                value={lastName}
+                onChange={(e) => {
+                  setLastName(e.target.value)
+                  if (status !== 'idle' && status !== 'loading') setStatus('idle')
+                }}
+                className="newsletter-input"
+                autoComplete="family-name"
+                disabled={status === 'loading'}
+              />
+            </div>
 
             <div className="newsletter-input-group">
               <label htmlFor="newsletter-email" className="sr-only">

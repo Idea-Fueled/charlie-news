@@ -225,10 +225,10 @@ export const AdminDashboard = async (props: DashboardProps) => {
         <div className="charlie-kpi-card">
           <div className="charlie-kpi-top">
             <span className="charlie-kpi-label">Published Today</span>
-            <span className="charlie-kpi-tag charlie-kpi-tag--neutral">Sydney Time</span>
+            <span className="charlie-kpi-tag charlie-kpi-tag--neutral">Melbourne Time</span>
           </div>
           <div className="charlie-kpi-number">{publishedTodayCount}</div>
-          <div className="charlie-kpi-desc">Articles published since midnight Sydney</div>
+          <div className="charlie-kpi-desc">Articles published since midnight Melbourne</div>
           <div className="charlie-kpi-action">
             <Link
               href="/admin/collections/articles?where[status][equals]=Published"

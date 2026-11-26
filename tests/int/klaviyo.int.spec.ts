@@ -330,6 +330,62 @@ describe('Klaviyo Newsletter Client (Option B)', () => {
       expect(data.message).toBe(NEWSLETTER_MESSAGES.INVALID_EMAIL)
     })
 
+    it('successfully processes subscription with first name and last name', async () => {
+      const fetchMock = vi.fn()
+      // Step 1: POST /api/profiles/ -> 201 Created
+      fetchMock.mockResolvedValueOnce({
+        status: 201,
+        ok: true,
+        json: async () => ({
+          data: { id: 'PROFILE_NEW_123', type: 'profile' },
+        }),
+      })
+      // Step 2: POST /api/lists/TEST_LIST_ID/relationships/profiles/ -> 204 No Content
+      fetchMock.mockResolvedValueOnce({
+        status: 204,
+        ok: true,
+        text: async () => '',
+      })
+      // Step 3: POST /api/profile-subscription-bulk-create-jobs/ -> 202 Accepted
+      fetchMock.mockResolvedValueOnce({
+        status: 202,
+        ok: true,
+        text: async () => '',
+      })
+      // Step 4: GET /api/lists/TEST_LIST_ID/ -> 200 OK
+      fetchMock.mockResolvedValueOnce({
+        status: 200,
+        ok: true,
+        json: async () => ({
+          data: { attributes: { opt_in_process: 'single_opt_in' } },
+        }),
+      })
+      global.fetch = fetchMock
+
+      const { POST } = await import('@/app/api/newsletter/subscribe/route')
+      const req = new Request('http://localhost:3005/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@example.com',
+        }),
+      })
+
+      const res = await POST(req as any)
+      const data = await res.json()
+
+      expect(res.status).toBe(200)
+      expect(data.success).toBe(true)
+      expect(data.message).toBe(NEWSLETTER_MESSAGES.SUCCESS)
+
+      // Verify first and last names were forwarded to Klaviyo
+      const profileBody = JSON.parse(fetchMock.mock.calls[0][1].body)
+      expect(profileBody.data.attributes.first_name).toBe('John')
+      expect(profileBody.data.attributes.last_name).toBe('Doe')
+    })
+
     it('returns diagnostic info via GET without exposing private tokens', async () => {
       const { GET } = await import('@/app/api/newsletter/subscribe/route')
       const res = await GET()

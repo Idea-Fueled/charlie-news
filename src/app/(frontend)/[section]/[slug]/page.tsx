@@ -222,7 +222,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {/* Metadata Row */}
         <div className="article-meta-header">
           <div>
-            Published on <time dateTime={dateStr || undefined}><strong>{formattedDate}</strong></time> (Sydney Time)
+            Published on <time dateTime={dateStr || undefined}><strong>{formattedDate}</strong></time> (Melbourne Time)
           </div>
           <div>
             Section:{' '}

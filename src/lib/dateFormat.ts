@@ -10,7 +10,7 @@ export const DEFAULT_DATE_FORMAT_STYLE: DateFormatStyle =
 
 /**
  * Standardized date formatting across all public website components.
- * Guarantees en-AU locale and Australia/Sydney timezone.
+ * Guarantees en-AU locale and Australia/Melbourne timezone.
  */
 export function formatArticleDate(
   dateInput?: string | Date | null,
@@ -31,6 +31,6 @@ export function formatArticleDate(
     day: 'numeric',
     month: monthFormat,
     year: 'numeric',
-    timeZone: 'Australia/Sydney',
+    timeZone: 'Australia/Melbourne',
   }).format(date)
 }

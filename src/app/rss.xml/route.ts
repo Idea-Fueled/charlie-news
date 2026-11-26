@@ -14,8 +14,8 @@ export async function GET() {
       const pubDate = article.publishedAt
         ? new Date(article.publishedAt).toUTCString()
         : article.createdAt
-        ? new Date(article.createdAt).toUTCString()
-        : new Date().toUTCString()
+          ? new Date(article.createdAt).toUTCString()
+          : new Date().toUTCString()
       const description = article.seoDescription || article.summary || ''
 
       return `    <item>

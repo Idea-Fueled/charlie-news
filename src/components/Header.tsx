@@ -38,7 +38,7 @@ export function Header({ sections = [] }: HeaderProps) {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-    timeZone: 'Australia/Sydney',
+    timeZone: 'Australia/Melbourne',
   }).format(new Date())
 
   return (
@@ -64,7 +64,7 @@ export function Header({ sections = [] }: HeaderProps) {
               <line x1="3" x2="21" y1="10" y2="10"/>
             </svg>
             <span>
-              {todayFormatted} <span className="utility-tz">(Sydney Time)</span>
+              {todayFormatted} <span className="utility-tz">(Melbourne Time)</span>
             </span>
           </div>
         </div>

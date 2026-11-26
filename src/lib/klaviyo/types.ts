@@ -28,6 +28,8 @@ export interface NewsletterSubscribeResult {
 }
 
 export interface SubscribeOptions {
+  firstName?: string
+  lastName?: string
   useMock?: boolean
   forceFail?: boolean
   forcePartialFail?: boolean

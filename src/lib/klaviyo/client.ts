@@ -253,15 +253,24 @@ export async function subscribeToNewsletter(
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), 10000)
 
+    const profileAttributes: Record<string, any> = {
+      email: normalizedEmail,
+      properties: {
+        $source: 'Property News Australia Website Footer',
+      },
+    }
+
+    if (options.firstName && options.firstName.trim()) {
+      profileAttributes.first_name = options.firstName.trim()
+    }
+    if (options.lastName && options.lastName.trim()) {
+      profileAttributes.last_name = options.lastName.trim()
+    }
+
     const profilePayload = {
       data: {
         type: 'profile',
-        attributes: {
-          email: normalizedEmail,
-          properties: {
-            $source: 'Property News Australia Website Footer',
-          },
-        },
+        attributes: profileAttributes,
       },
     }
 

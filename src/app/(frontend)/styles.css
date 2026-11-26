@@ -1048,6 +1048,11 @@ img {
   gap: 8px;
 }
 
+.newsletter-names-group {
+  display: flex;
+  gap: 8px;
+}
+
 .newsletter-input-group {
   display: flex;
   gap: 8px;
@@ -1515,6 +1520,10 @@ select:focus-visible,
 
 /* MOBILE PHONES (<= 640px) */
 @media (max-width: 640px) {
+  .newsletter-names-group {
+    flex-direction: column;
+    gap: 10px;
+  }
   .newsletter-input-group {
     flex-direction: column;
     gap: 10px;
